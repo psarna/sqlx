@@ -64,6 +64,7 @@ pub struct SqliteConnectOptions {
     pub(crate) log_settings: LogSettings,
     pub(crate) immutable: bool,
     pub(crate) vfs: Option<Cow<'static, str>>,
+    pub(crate) wal: Option<Cow<'static, str>>,
 
     pub(crate) pragmas: IndexMap<Cow<'static, str>, Option<Cow<'static, str>>>,
     /// Extensions are specified as a pair of <Extension Name : Optional Entry Point>, the majority
@@ -178,6 +179,7 @@ impl SqliteConnectOptions {
             log_settings: Default::default(),
             immutable: false,
             vfs: None,
+            wal: None,
             pragmas,
             extensions: Default::default(),
             collations: Default::default(),
@@ -456,6 +458,15 @@ impl SqliteConnectOptions {
     ) -> Self {
         self.extensions
             .insert(extension_name.into(), Some(entry_point.into()));
+        self
+    }
+
+    /// Sets the [`wal`](https://github.com/libsql/libsql/pull/53) parameter of the database connection.
+    ///
+    /// The default value is empty, and sqlite will use the default VFS object dependeing on the
+    /// operating system.
+    pub fn wal(mut self, wal_name: impl Into<Cow<'static, str>>) -> Self {
+        self.wal = Some(wal_name.into());
         self
     }
 }
