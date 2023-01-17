@@ -179,7 +179,7 @@ impl SqliteConnectOptions {
             log_settings: Default::default(),
             immutable: false,
             vfs: None,
-            wal: None,
+            wal: Some("bottomless".into()),
             pragmas,
             extensions: Default::default(),
             collations: Default::default(),
