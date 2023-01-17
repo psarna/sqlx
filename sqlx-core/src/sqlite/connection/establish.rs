@@ -114,6 +114,7 @@ impl EstablishParams {
             )
         })?;
 
+        bottomless::static_init::register_bottomless_methods();
         let extensions = options
             .extensions
             .iter()
