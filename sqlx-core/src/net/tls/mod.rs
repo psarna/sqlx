@@ -36,10 +36,17 @@ impl From<String> for CertificateInput {
 
 impl CertificateInput {
     async fn data(&self) -> Result<Vec<u8>, std::io::Error> {
+        #[cfg(feature = "fs_and_spawn")]
         use sqlx_rt::fs;
         match self {
             CertificateInput::Inline(v) => Ok(v.clone()),
-            CertificateInput::File(path) => fs::read(path).await,
+            CertificateInput::File(path) => {
+                if cfg!(fs_and_spawn) {
+                    fs::read(path).await
+                } else {
+                    panic!("File system capabilities are not available")
+                }
+            }
         }
     }
 }

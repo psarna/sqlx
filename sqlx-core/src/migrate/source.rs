@@ -2,6 +2,7 @@ use crate::error::BoxDynError;
 use crate::migrate::{Migration, MigrationType};
 use futures_core::future::BoxFuture;
 use futures_util::TryStreamExt;
+#[cfg(feature = "fs_and_spawn")]
 use sqlx_rt::fs;
 use std::borrow::Cow;
 use std::fmt::Debug;
@@ -17,6 +18,7 @@ pub trait MigrationSource<'s>: Debug {
 /// scripts must be stored in files with names using the format `<VERSION>_<DESCRIPTION>.sql`,
 /// where `<VERSION>` is a string that can be parsed into `i64` and its value is greater than zero,
 /// and `<DESCRIPTION>` is a string.
+#[cfg(feature = "fs_and_spawn")]
 impl<'s> MigrationSource<'s> for &'s Path {
     fn resolve(self) -> BoxFuture<'s, Result<Vec<Migration>, BoxDynError>> {
         Box::pin(async move {
@@ -70,6 +72,7 @@ impl<'s> MigrationSource<'s> for &'s Path {
     }
 }
 
+#[cfg(feature = "fs_and_spawn")]
 impl MigrationSource<'static> for PathBuf {
     fn resolve(self) -> BoxFuture<'static, Result<Vec<Migration>, BoxDynError>> {
         Box::pin(async move { self.as_path().resolve().await })

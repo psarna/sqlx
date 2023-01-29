@@ -41,9 +41,10 @@ features = ["all", "runtime-tokio-native-tls"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
-default = ["macros", "migrate"]
+default = ["macros", "migrate", "fs_and_spawn"]
 macros = ["sqlx-macros"]
 migrate = ["sqlx-macros/migrate", "sqlx-core/migrate"]
+fs_and_spawn = ["sqlx-macros/fs_and_spawn", "sqlx-core/fs_and_spawn"]
 
 # [deprecated] TLS is not possible to disable due to it being conditional on multiple features
 #              Hopefully Cargo can handle this in the future

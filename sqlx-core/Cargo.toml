@@ -16,8 +16,9 @@ authors = [
 features = ["all-databases", "all-types", "offline", "runtime-tokio-native-tls"]
 
 [features]
-default = ["migrate"]
+default = ["migrate", "fs_and_spawn"]
 migrate = ["sha2", "crc"]
+fs_and_spawn = ["sqlx-rt/fs_and_spawn"]
 
 # databases
 all-databases = ["postgres", "mysql", "sqlite", "mssql", "any"]

@@ -18,6 +18,7 @@ proc-macro = true
 [features]
 default = ["runtime-tokio-native-tls", "migrate"]
 migrate = ["sha2", "sqlx-core/migrate"]
+fs_and_spawn = ["sqlx-core/fs_and_spawn"]
 
 # runtimes
 runtime-actix-native-tls = ["runtime-tokio-native-tls"]
