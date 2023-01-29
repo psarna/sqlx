@@ -6,6 +6,7 @@ use futures_core::future::BoxFuture;
 
 use crate::database::Database;
 use crate::error::Error;
+#[cfg(feature = "fs_and_spawn")]
 use crate::pool::MaybePoolConnection;
 
 /// Generic management of database transactions.
@@ -54,7 +55,12 @@ pub struct Transaction<'c, DB>
 where
     DB: Database,
 {
+    #[cfg(feature = "fs_and_spawn")]
     connection: MaybePoolConnection<'c, DB>,
+    #[cfg(not(feature = "fs_and_spawn"))]
+    connection: DB::Connection,
+    #[cfg(not(feature = "fs_and_spawn"))]
+    phantom: std::marker::PhantomData<&'c ()>,
     open: bool,
 }
 
@@ -62,9 +68,8 @@ impl<'c, DB> Transaction<'c, DB>
 where
     DB: Database,
 {
-    pub(crate) fn begin(
-        conn: impl Into<MaybePoolConnection<'c, DB>>,
-    ) -> BoxFuture<'c, Result<Self, Error>> {
+    #[cfg(feature = "fs_and_spawn")]
+    pub(crate) fn begin(conn: impl Into<MaybePoolConnection<'c, DB>>) -> BoxFuture<'c, Result<Self, Error>> {
         let mut conn = conn.into();
 
         Box::pin(async move {
@@ -73,6 +78,22 @@ where
             Ok(Self {
                 connection: conn,
                 open: true,
+                phantom: Default::default(),
+            })
+        })
+    }
+
+    #[cfg(not(feature = "fs_and_spawn"))]
+    pub(crate) fn begin(conn: impl Into<DB::Connection>) -> BoxFuture<'c, Result<Self, Error>> {
+        let mut conn = conn.into();
+
+        Box::pin(async move {
+            DB::TransactionManager::begin(&mut conn).await?;
+
+            Ok(Self {
+                connection: conn,
+                open: true,
+                phantom: Default::default(),
             })
         })
     }

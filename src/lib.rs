@@ -7,6 +7,7 @@ compile_error!(
      and 'tls' is one of 'native-tls' and 'rustls'."
 );
 
+#[cfg(feature = "fs_and_spawn")]
 pub use sqlx_core::acquire::Acquire;
 pub use sqlx_core::arguments::{Arguments, IntoArguments};
 pub use sqlx_core::column::Column;
@@ -16,6 +17,7 @@ pub use sqlx_core::database::{self, Database};
 pub use sqlx_core::describe::Describe;
 pub use sqlx_core::executor::{Execute, Executor};
 pub use sqlx_core::from_row::FromRow;
+#[cfg(feature = "fs_and_spawn")]
 pub use sqlx_core::pool::{self, Pool};
 pub use sqlx_core::query::{query, query_with};
 pub use sqlx_core::query_as::{query_as, query_as_with};
@@ -145,6 +147,7 @@ pub mod query {
 
 /// Convenience re-export of common traits.
 pub mod prelude {
+    #[cfg(feature = "fs_and_spawn")]
     pub use super::Acquire;
     pub use super::ConnectOptions;
     pub use super::Connection;

@@ -32,7 +32,7 @@ pub trait Connection: Send {
     /// Begin a new transaction or establish a savepoint within the active transaction.
     ///
     /// Returns a [`Transaction`] for controlling and tracking the new transaction.
-    fn begin(&mut self) -> BoxFuture<'_, Result<Transaction<'_, Self::Database>, Error>>
+    fn begin(&mut self) -> BoxFuture<'_, Result<Transaction<Self::Database>, Error>>
     where
         Self: Sized;
 
@@ -58,7 +58,7 @@ pub trait Connection: Send {
     /// ```
     fn transaction<'a, F, R, E>(&'a mut self, callback: F) -> BoxFuture<'a, Result<R, E>>
     where
-        for<'c> F: FnOnce(&'c mut Transaction<'_, Self::Database>) -> BoxFuture<'c, Result<R, E>>
+        for<'c> F: FnOnce(&'c mut Transaction<Self::Database>) -> BoxFuture<'c, Result<R, E>>
             + 'a
             + Send
             + Sync,

@@ -28,6 +28,7 @@ pub mod error;
 #[macro_use]
 pub mod arguments;
 
+#[cfg(feature = "fs_and_spawn")]
 #[macro_use]
 pub mod pool;
 
@@ -48,6 +49,7 @@ pub mod types;
 #[macro_use]
 pub mod query;
 
+#[cfg(feature = "fs_and_spawn")]
 #[macro_use]
 pub mod acquire;
 
@@ -65,6 +67,7 @@ pub mod executor;
 pub mod from_row;
 mod io;
 mod logger;
+#[cfg(feature = "fs_and_spawn")]
 mod net;
 pub mod query_as;
 pub mod query_builder;
