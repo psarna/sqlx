@@ -106,6 +106,10 @@ pub mod mysql;
 #[cfg_attr(docsrs, doc(cfg(feature = "mssql")))]
 pub mod mssql;
 
+#[cfg(feature = "libsql-http")]
+#[cfg_attr(docsrs, doc(cfg(feature = "libsql-http")))]
+pub mod libsql_http;
+
 // Implements test support with automatic DB management.
 #[cfg(feature = "migrate")]
 pub mod testing;
