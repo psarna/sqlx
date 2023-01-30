@@ -33,7 +33,7 @@ impl Connection for LibsqlHttpConnection {
     where
         Self: Sized,
     {
-        Transaction::begin(self)
+        panic!();
     }
 
     fn cached_statements_size(&self) -> usize {
@@ -84,7 +84,7 @@ impl ConnectOptions for LibsqlHttpConnectOptions {
         Self::Connection: Sized,
     {
         Box::pin(future::ok(Self::Connection {
-            session: libsql_client::Session::connect(self.url, self.user, self.pass),
+            session: libsql_client::Session::connect(&self.url, &self.user, &self.pass),
         }))
     }
 

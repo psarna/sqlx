@@ -13,17 +13,17 @@ impl TransactionManager for LibsqlHttpTransactionManager {
 
     fn begin(conn: &mut LibsqlHttpConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement
-        Box::pin(future::ok())
+        Box::pin(future::ok(()))
     }
 
     fn commit(conn: &mut LibsqlHttpConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement
-        Box::pin(future::ok())
+        Box::pin(future::ok(()))
     }
 
     fn rollback(conn: &mut LibsqlHttpConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement
-        Box::pin(future::ok())
+        Box::pin(future::ok(()))
     }
 
     fn start_rollback(conn: &mut LibsqlHttpConnection) {
