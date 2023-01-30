@@ -11,14 +11,14 @@ mod type_info;
 mod value;
 
 use connection::{LibsqlHttpConnectOptions, LibsqlHttpConnection};
-use database::Libsql;
-use type_info::LibsqlTypeInfo;
-use column::LibsqlColumn;
+use database::LibsqlHttp;
+use type_info::LibsqlHttpTypeInfo;
+use column::LibsqlHttpColumn;
 use value::{LibsqlHttpValue, LibsqlHttpValueRef};
-use row::LibsqlRow;
+use row::LibsqlHttpRow;
 use transaction::LibsqlHttpTransactionManager;
 use query_result::LibsqlHttpQueryResult;
-use arguments::{LibsqlArguments, LibsqlArgumentValue};
+use arguments::{LibsqlHttpArguments, LibsqlHttpArgumentValue};
 use crate::statement::Statement;
 
 use std::borrow::Cow;
@@ -32,18 +32,18 @@ use crate::error::Error;
 
 #[derive(Debug, Clone)]
 #[allow(clippy::rc_buffer)]
-pub struct LibsqlStatement<'q> {
+pub struct LibsqlHttpStatement<'q> {
     pub(crate) sql: Cow<'q, str>,
     pub(crate) parameters: usize,
-    pub(crate) columns: Arc<Vec<LibsqlColumn>>,
+    pub(crate) columns: Arc<Vec<LibsqlHttpColumn>>,
     pub(crate) column_names: Arc<HashMap<UStr, usize>>,
 }
 
-impl<'q> Statement<'q> for LibsqlStatement<'q> {
-    type Database = Libsql;
+impl<'q> Statement<'q> for LibsqlHttpStatement<'q> {
+    type Database = LibsqlHttp;
 
-    fn to_owned(&self) -> LibsqlStatement<'static> {
-        LibsqlStatement::<'static> {
+    fn to_owned(&self) -> LibsqlHttpStatement<'static> {
+        LibsqlHttpStatement::<'static> {
             sql: Cow::Owned(self.sql.clone().into_owned()),
             parameters: self.parameters,
             columns: Arc::clone(&self.columns),
@@ -55,19 +55,19 @@ impl<'q> Statement<'q> for LibsqlStatement<'q> {
         &self.sql
     }
 
-    fn parameters(&self) -> Option<Either<&[LibsqlTypeInfo], usize>> {
+    fn parameters(&self) -> Option<Either<&[LibsqlHttpTypeInfo], usize>> {
         Some(Either::Right(self.parameters))
     }
 
-    fn columns(&self) -> &[LibsqlColumn] {
+    fn columns(&self) -> &[LibsqlHttpColumn] {
         &self.columns
     }
 
-    impl_statement_query!(LibsqlArguments<'_>);
+    impl_statement_query!(LibsqlHttpArguments<'_>);
 }
 
-impl ColumnIndex<LibsqlStatement<'_>> for &'_ str {
-    fn index(&self, statement: &LibsqlStatement<'_>) -> Result<usize, Error> {
+impl ColumnIndex<LibsqlHttpStatement<'_>> for &'_ str {
+    fn index(&self, statement: &LibsqlHttpStatement<'_>) -> Result<usize, Error> {
         statement
             .column_names
             .get(*self)

@@ -1,47 +1,47 @@
 use crate::database::{Database, HasArguments, HasStatement, HasStatementCache, HasValueRef};
-use crate::libsql_http::{LibsqlHttpConnection, LibsqlHttpTransactionManager, LibsqlRow,
-    LibsqlHttpQueryResult, LibsqlColumn, LibsqlTypeInfo, LibsqlHttpValue, LibsqlHttpValueRef,
-    LibsqlArguments, LibsqlArgumentValue, LibsqlStatement
+use crate::libsql_http::{LibsqlHttpConnection, LibsqlHttpTransactionManager, LibsqlHttpRow,
+    LibsqlHttpQueryResult, LibsqlHttpColumn, LibsqlHttpTypeInfo, LibsqlHttpValue, LibsqlHttpValueRef,
+    LibsqlHttpArguments, LibsqlHttpArgumentValue, LibsqlHttpStatement
 };
 
-/// Libsql database driver.
+/// LibsqlHttp database driver.
 #[derive(Debug)]
-pub struct Libsql;
+pub struct LibsqlHttp;
 
-impl Database for Libsql {
+impl Database for LibsqlHttp {
     type Connection = LibsqlHttpConnection;
 
     type TransactionManager = LibsqlHttpTransactionManager;
 
-    type Row = LibsqlRow;
+    type Row = LibsqlHttpRow;
 
     type QueryResult = LibsqlHttpQueryResult;
 
-    type Column = LibsqlColumn;
+    type Column = LibsqlHttpColumn;
 
-    type TypeInfo = LibsqlTypeInfo;
+    type TypeInfo = LibsqlHttpTypeInfo;
 
     type Value = LibsqlHttpValue;
 }
 
-impl<'r> HasValueRef<'r> for Libsql {
-    type Database = Libsql;
+impl<'r> HasValueRef<'r> for LibsqlHttp {
+    type Database = LibsqlHttp;
 
     type ValueRef = LibsqlHttpValueRef<'r>;
 }
 
-impl<'q> HasArguments<'q> for Libsql {
-    type Database = Libsql;
+impl<'q> HasArguments<'q> for LibsqlHttp {
+    type Database = LibsqlHttp;
 
-    type Arguments = LibsqlArguments<'q>;
+    type Arguments = LibsqlHttpArguments<'q>;
 
-    type ArgumentBuffer = Vec<LibsqlArgumentValue<'q>>;
+    type ArgumentBuffer = Vec<LibsqlHttpArgumentValue<'q>>;
 }
 
-impl<'q> HasStatement<'q> for Libsql {
-    type Database = Libsql;
+impl<'q> HasStatement<'q> for LibsqlHttp {
+    type Database = LibsqlHttp;
 
-    type Statement = LibsqlStatement<'q>;
+    type Statement = LibsqlHttpStatement<'q>;
 }
 
-impl HasStatementCache for Libsql {}
+impl HasStatementCache for LibsqlHttp {}

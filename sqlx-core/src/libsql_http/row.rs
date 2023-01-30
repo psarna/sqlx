@@ -8,24 +8,24 @@ use crate::column::ColumnIndex;
 use crate::error::Error;
 use crate::ext::ustr::UStr;
 use crate::row::Row;
-use crate::libsql_http::{Libsql, LibsqlColumn, LibsqlHttpValue, LibsqlHttpValueRef};
+use crate::libsql_http::{LibsqlHttp, LibsqlHttpColumn, LibsqlHttpValue, LibsqlHttpValueRef};
 
-/// Implementation of [`Row`] for Libsql.
-pub struct LibsqlRow {
+/// Implementation of [`Row`] for LibsqlHttp.
+pub struct LibsqlHttpRow {
     pub(crate) values: Box<[LibsqlHttpValue]>,
-    pub(crate) columns: Arc<Vec<LibsqlColumn>>,
+    pub(crate) columns: Arc<Vec<LibsqlHttpColumn>>,
     pub(crate) column_names: Arc<HashMap<UStr, usize>>,
 }
 
-impl crate::row::private_row::Sealed for LibsqlRow {}
+impl crate::row::private_row::Sealed for LibsqlHttpRow {}
 
-unsafe impl Send for LibsqlRow {}
-unsafe impl Sync for LibsqlRow {}
+unsafe impl Send for LibsqlHttpRow {}
+unsafe impl Sync for LibsqlHttpRow {}
 
-impl Row for LibsqlRow {
-    type Database = Libsql;
+impl Row for LibsqlHttpRow {
+    type Database = LibsqlHttp;
 
-    fn columns(&self) -> &[LibsqlColumn] {
+    fn columns(&self) -> &[LibsqlHttpColumn] {
         &self.columns
     }
 
@@ -38,8 +38,8 @@ impl Row for LibsqlRow {
     }
 }
 
-impl ColumnIndex<LibsqlRow> for &'_ str {
-    fn index(&self, row: &LibsqlRow) -> Result<usize, Error> {
+impl ColumnIndex<LibsqlHttpRow> for &'_ str {
+    fn index(&self, row: &LibsqlHttpRow) -> Result<usize, Error> {
         row.column_names
             .get(*self)
             .ok_or_else(|| Error::ColumnNotFound((*self).into()))

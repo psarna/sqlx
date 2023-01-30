@@ -1,7 +1,7 @@
 use crate::database::{Database, HasValueRef};
 use crate::decode::Decode;
 use crate::error::{mismatched_types, Error};
-use crate::libsql_http::{Libsql, LibsqlTypeInfo};
+use crate::libsql_http::{LibsqlHttp, LibsqlHttpTypeInfo};
 use crate::type_info::TypeInfo;
 use crate::types::Type;
 use crate::value::{Value, ValueRef};
@@ -21,7 +21,7 @@ impl<'r> LibsqlHttpValueRef<'r> {
 }
 
 impl<'r> ValueRef<'r> for LibsqlHttpValueRef<'r> {
-    type Database = Libsql;
+    type Database = LibsqlHttp;
 
     fn to_owned(&self) -> LibsqlHttpValue {
         match self.0 {
@@ -29,7 +29,7 @@ impl<'r> ValueRef<'r> for LibsqlHttpValueRef<'r> {
         }
     }
 
-    fn type_info(&self) -> Cow<'_, LibsqlTypeInfo> {
+    fn type_info(&self) -> Cow<'_, LibsqlHttpTypeInfo> {
         match self.0 {
             LibsqlHttpValueData::Value(v) => v.type_info(),
         }
@@ -45,17 +45,17 @@ impl<'r> ValueRef<'r> for LibsqlHttpValueRef<'r> {
 #[derive(Clone)]
 pub struct LibsqlHttpValue {
     pub(crate) value: Option<CellValue>,
-    pub(crate) type_info: LibsqlTypeInfo,
+    pub(crate) type_info: LibsqlHttpTypeInfo,
 }
 
 impl Value for LibsqlHttpValue {
-    type Database = Libsql;
+    type Database = LibsqlHttp;
 
     fn as_ref(&self) -> LibsqlHttpValueRef<'_> {
         LibsqlHttpValueRef::value(self)
     }
 
-    fn type_info(&self) -> Cow<'_, LibsqlTypeInfo> {
+    fn type_info(&self) -> Cow<'_, LibsqlHttpTypeInfo> {
         Cow::Borrowed(&self.type_info)
     }
 
