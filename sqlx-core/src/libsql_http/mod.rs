@@ -1,3 +1,5 @@
+#![allow(unsafe_code)]
+
 mod column;
 mod connection;
 mod database;
@@ -10,3 +12,5 @@ mod value;
 use connection::{LibsqlHttpConnectOptions, LibsqlHttpConnection};
 use database::Libsql;
 use type_info::LibsqlTypeInfo;
+use column::LibsqlColumn;
+use value::{LibsqlHttpValue, LibsqlHttpValueRef};
