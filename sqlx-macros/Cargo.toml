@@ -57,6 +57,7 @@ mysql = ["sqlx-core/mysql"]
 postgres = ["sqlx-core/postgres"]
 sqlite = ["sqlx-core/sqlite"]
 mssql = ["sqlx-core/mssql"]
+libsql-http = ["sqlx-core/libsql-http"]
 
 # type
 bigdecimal = ["sqlx-core/bigdecimal"]
