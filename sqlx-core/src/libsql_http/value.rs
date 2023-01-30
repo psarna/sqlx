@@ -14,6 +14,12 @@ enum LibsqlHttpValueData<'r> {
 
 pub struct LibsqlHttpValueRef<'r>(LibsqlHttpValueData<'r>);
 
+impl<'r> LibsqlHttpValueRef<'r> {
+    pub(crate) fn value(value: &'r LibsqlHttpValue) -> Self {
+        Self(LibsqlHttpValueData::Value(value))
+    }
+}
+
 impl<'r> ValueRef<'r> for LibsqlHttpValueRef<'r> {
     type Database = Libsql;
 
