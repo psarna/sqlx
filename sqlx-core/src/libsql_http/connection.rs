@@ -6,6 +6,7 @@ use log::LevelFilter;
 use std::time::Duration;
 
 use crate::error::Error;
+use crate::libsql_http::Libsql;
 use crate::transaction::Transaction;
 
 pub struct LibsqlHttpConnection {
@@ -13,7 +14,7 @@ pub struct LibsqlHttpConnection {
 }
 
 impl Connection for LibsqlHttpConnection {
-    type Database = i32; // FIXME - super::Database;
+    type Database = Libsql;
     type Options = LibsqlHttpConnectOptions;
 
     fn close(self) -> BoxFuture<'static, Result<(), Error>> {

@@ -1,8 +1,10 @@
 use crate::database::{Database, HasValueRef};
 use crate::decode::Decode;
 use crate::error::{mismatched_types, Error};
+use crate::libsql_http::{Libsql, LibsqlTypeInfo};
 use crate::type_info::TypeInfo;
 use crate::types::Type;
+use crate::value::{Value, ValueRef};
 use libsql_client::CellValue;
 use std::borrow::Cow;
 
@@ -21,7 +23,7 @@ impl<'r> ValueRef<'r> for LibsqlHttpValueRef<'r> {
         }
     }
 
-    fn type_info(&self) -> Cow<'_, LibsqlHttpTypeInfo> {
+    fn type_info(&self) -> Cow<'_, LibsqlTypeInfo> {
         match self.0 {
             LibsqlHttpValueData::Value(v) => v.type_info(),
         }
@@ -37,7 +39,7 @@ impl<'r> ValueRef<'r> for LibsqlHttpValueRef<'r> {
 #[derive(Clone)]
 pub struct LibsqlHttpValue {
     pub(crate) value: Option<CellValue>,
-    pub(crate) type_info: SqliteTypeInfo,
+    pub(crate) type_info: LibsqlTypeInfo,
 }
 
 impl Value for LibsqlHttpValue {
@@ -47,11 +49,11 @@ impl Value for LibsqlHttpValue {
         LibsqlHttpValueRef::value(self)
     }
 
-    fn type_info(&self) -> Cow<'_, SqliteTypeInfo> {
+    fn type_info(&self) -> Cow<'_, LibsqlTypeInfo> {
         Cow::Borrowed(&self.type_info)
     }
 
     fn is_null(&self) -> bool {
-        value.is_some()
+        self.value.is_some()
     }
 }

@@ -2,14 +2,14 @@ use futures_core::future::BoxFuture;
 use futures_util::future;
 
 use crate::error::Error;
-use crate::libsql_http::LibsqlHttpConnection;
+use crate::libsql_http::{Libsql, LibsqlHttpConnection};
 use crate::transaction::TransactionManager;
 
 /// Implementation of [`TransactionManager`] for SQLite.
 pub struct LibsqlHttpTransactionManager;
 
 impl TransactionManager for LibsqlHttpTransactionManager {
-    type Database = i32; // fixme: super::Database
+    type Database = Libsql;
 
     fn begin(conn: &mut LibsqlHttpConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement
