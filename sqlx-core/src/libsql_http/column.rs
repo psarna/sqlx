@@ -1,19 +1,19 @@
 use crate::column::Column;
 use crate::ext::ustr::UStr;
-use crate::libsql_http::{Libsql, LibsqlTypeInfo};
+use crate::libsql_http::{LibsqlHttp, LibsqlHttpTypeInfo};
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
-pub struct LibsqlColumn {
+pub struct LibsqlHttpColumn {
     pub(crate) name: UStr,
     pub(crate) ordinal: usize,
-    pub(crate) type_info: LibsqlTypeInfo,
+    pub(crate) type_info: LibsqlHttpTypeInfo,
 }
 
-impl crate::column::private_column::Sealed for LibsqlColumn {}
+impl crate::column::private_column::Sealed for LibsqlHttpColumn {}
 
-impl Column for LibsqlColumn {
-    type Database = Libsql;
+impl Column for LibsqlHttpColumn {
+    type Database = LibsqlHttp;
 
     fn ordinal(&self) -> usize {
         self.ordinal
@@ -23,7 +23,7 @@ impl Column for LibsqlColumn {
         &*self.name
     }
 
-    fn type_info(&self) -> &LibsqlTypeInfo {
+    fn type_info(&self) -> &LibsqlHttpTypeInfo {
         &self.type_info
     }
 }
