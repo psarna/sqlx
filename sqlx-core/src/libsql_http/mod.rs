@@ -4,6 +4,7 @@ mod arguments;
 mod column;
 mod connection;
 mod database;
+mod executor;
 mod query_result;
 mod row;
 mod transaction;

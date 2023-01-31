@@ -9,6 +9,7 @@ use crate::error::Error;
 use crate::libsql_http::LibsqlHttp;
 use crate::transaction::Transaction;
 
+#[derive(Clone, Debug)]
 pub struct LibsqlHttpConnection {
     session: Session,
 }
