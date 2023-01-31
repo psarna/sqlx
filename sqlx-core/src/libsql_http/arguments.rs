@@ -1,9 +1,9 @@
 use crate::arguments::Arguments;
 use crate::encode::{Encode, IsNull};
 use crate::error::Error;
+use crate::libsql_http::LibsqlHttp;
 use atoi::atoi;
 use std::borrow::Cow;
-use crate::libsql_http::LibsqlHttp;
 
 const LIBSQL_OK: i32 = 0;
 

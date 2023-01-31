@@ -55,11 +55,42 @@ impl Connection for LibsqlHttpConnection {
     }
 }
 
+impl LibsqlHttpConnection {
+    fn connect_with<D>(ctx: &worker::RouteContext<D>) -> BoxFuture<'_, Result<Self, Error>>
+    where
+        Self: Sized,
+    {
+        let options = LibsqlHttpConnectOptions::try_from(ctx);
+        Box::pin(async move { options?.connect().await })
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct LibsqlHttpConnectOptions {
     url: String,
     user: String,
     pass: String,
+}
+
+impl<D> TryFrom<&worker::RouteContext<D>> for LibsqlHttpConnectOptions {
+    type Error = Error;
+
+    fn try_from(ctx: &worker::RouteContext<D>) -> Result<Self, Error> {
+        Ok(Self {
+            url: ctx
+                .var("LIBSQL_CLIENT_URL")
+                .map_err(|e| Error::Protocol(e.to_string()))?
+                .to_string(),
+            user: ctx
+                .var("LIBSQL_CLIENT_USER")
+                .map_err(|e| Error::Protocol(e.to_string()))?
+                .to_string(),
+            pass: ctx
+                .var("LIBSQL_CLIENT_PASS")
+                .map_err(|e| Error::Protocol(e.to_string()))?
+                .to_string(),
+        })
+    }
 }
 
 impl std::str::FromStr for LibsqlHttpConnectOptions {

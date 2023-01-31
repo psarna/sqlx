@@ -26,7 +26,7 @@ postgres = ["md-5", "sha2", "base64", "sha1", "rand", "hmac", "futures-channel/s
 mysql = ["sha1", "sha2", "generic-array", "num-bigint", "digest", "rand", "rsa"]
 sqlite = ["libsqlite3-sys", "futures-executor", "flume"]
 mssql = ["uuid", "encoding_rs", "regex"]
-libsql-http = ["libsql-client"]
+libsql-http = ["libsql-client", "worker"]
 any = []
 
 # types
@@ -128,6 +128,7 @@ event-listener = "2.5.2"
 
 dotenvy = "0.15"
 libsql-client = { version = "0.1.6", optional = true }
+worker = { version = "0.0.12", optional = true }
 
 [dev-dependencies]
 sqlx = { version = "0.6.2", path = "..", features = ["postgres", "sqlite", "mysql"] }

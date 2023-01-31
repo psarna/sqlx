@@ -14,7 +14,10 @@
 // interface with the inherently unsafe C module. This unsafe code is contained
 // to the sqlite module.
 #![cfg_attr(feature = "sqlite", deny(unsafe_code))]
-#![cfg_attr(not(any(feature = "libsql-http", feature = "sqlite")), forbid(unsafe_code))]
+#![cfg_attr(
+    not(any(feature = "libsql-http", feature = "sqlite")),
+    forbid(unsafe_code)
+)]
 
 #[cfg(feature = "bigdecimal")]
 extern crate bigdecimal_ as bigdecimal;

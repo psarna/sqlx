@@ -10,25 +10,24 @@ mod transaction;
 mod type_info;
 mod value;
 
+use crate::statement::Statement;
+use arguments::{LibsqlHttpArgumentValue, LibsqlHttpArguments};
+use column::LibsqlHttpColumn;
 use connection::{LibsqlHttpConnectOptions, LibsqlHttpConnection};
 use database::LibsqlHttp;
-use type_info::LibsqlHttpTypeInfo;
-use column::LibsqlHttpColumn;
-use value::{LibsqlHttpValue, LibsqlHttpValueRef};
+use query_result::LibsqlHttpQueryResult;
 use row::LibsqlHttpRow;
 use transaction::LibsqlHttpTransactionManager;
-use query_result::LibsqlHttpQueryResult;
-use arguments::{LibsqlHttpArguments, LibsqlHttpArgumentValue};
-use crate::statement::Statement;
+use type_info::LibsqlHttpTypeInfo;
+use value::{LibsqlHttpValue, LibsqlHttpValueRef};
 
+use crate::column::ColumnIndex;
+use crate::error::Error;
+use crate::ext::ustr::UStr;
+use crate::HashMap;
+use either::Either;
 use std::borrow::Cow;
 use std::sync::Arc;
-use crate::HashMap;
-use crate::ext::ustr::UStr;
-use crate::column::ColumnIndex;
-use either::Either;
-use crate::error::Error;
-
 
 #[derive(Debug, Clone)]
 #[allow(clippy::rc_buffer)]

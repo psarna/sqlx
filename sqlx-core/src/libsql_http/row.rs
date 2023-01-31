@@ -7,8 +7,8 @@ use crate::HashMap;
 use crate::column::ColumnIndex;
 use crate::error::Error;
 use crate::ext::ustr::UStr;
-use crate::row::Row;
 use crate::libsql_http::{LibsqlHttp, LibsqlHttpColumn, LibsqlHttpValue, LibsqlHttpValueRef};
+use crate::row::Row;
 
 /// Implementation of [`Row`] for LibsqlHttp.
 pub struct LibsqlHttpRow {

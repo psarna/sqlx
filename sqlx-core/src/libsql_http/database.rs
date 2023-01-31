@@ -1,7 +1,8 @@
 use crate::database::{Database, HasArguments, HasStatement, HasStatementCache, HasValueRef};
-use crate::libsql_http::{LibsqlHttpConnection, LibsqlHttpTransactionManager, LibsqlHttpRow,
-    LibsqlHttpQueryResult, LibsqlHttpColumn, LibsqlHttpTypeInfo, LibsqlHttpValue, LibsqlHttpValueRef,
-    LibsqlHttpArguments, LibsqlHttpArgumentValue, LibsqlHttpStatement
+use crate::libsql_http::{
+    LibsqlHttpArgumentValue, LibsqlHttpArguments, LibsqlHttpColumn, LibsqlHttpConnection,
+    LibsqlHttpQueryResult, LibsqlHttpRow, LibsqlHttpStatement, LibsqlHttpTransactionManager,
+    LibsqlHttpTypeInfo, LibsqlHttpValue, LibsqlHttpValueRef,
 };
 
 /// LibsqlHttp database driver.
