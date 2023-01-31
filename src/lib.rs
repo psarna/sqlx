@@ -64,9 +64,9 @@ pub use sqlx_core::postgres::{self, PgConnection, PgExecutor, PgPool, Postgres};
 #[cfg_attr(docsrs, doc(cfg(feature = "sqlite")))]
 pub use sqlx_core::sqlite::{self, Sqlite, SqliteConnection, SqliteExecutor, SqlitePool};
 
-//#[cfg(feature = "libsql-http")]
-//#[cfg_attr(docsrs, doc(cfg(feature = "libsql-http")))]
-//pub use sqlx_core::libsql_http::{self, Libsql, LibsqlConnection, LibsqlExecutor};
+#[cfg(feature = "libsql-http")]
+#[cfg_attr(docsrs, doc(cfg(feature = "libsql-http")))]
+pub use sqlx_core::libsql_http::{self, LibsqlHttp, LibsqlHttpConnection};
 
 #[cfg(feature = "macros")]
 #[doc(hidden)]

@@ -56,7 +56,7 @@ impl Connection for LibsqlHttpConnection {
 }
 
 impl LibsqlHttpConnection {
-    fn connect_with<D>(ctx: &worker::RouteContext<D>) -> BoxFuture<'_, Result<Self, Error>>
+    pub fn connect_with_ctx<D>(ctx: &worker::RouteContext<D>) -> BoxFuture<'_, Result<Self, Error>>
     where
         Self: Sized,
     {
