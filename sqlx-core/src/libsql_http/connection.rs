@@ -1,7 +1,6 @@
 use crate::connection::{ConnectOptions, Connection};
 use futures_core::future::BoxFuture;
 use futures_util::future;
-use libsql_client::Session;
 use log::LevelFilter;
 use std::time::Duration;
 
@@ -11,7 +10,7 @@ use crate::transaction::Transaction;
 
 #[derive(Clone, Debug)]
 pub struct LibsqlHttpConnection {
-    session: Session,
+    connection: libsql_client::Connection,
 }
 
 impl Connection for LibsqlHttpConnection {
@@ -116,7 +115,7 @@ impl ConnectOptions for LibsqlHttpConnectOptions {
         Self::Connection: Sized,
     {
         Box::pin(future::ok(Self::Connection {
-            session: libsql_client::Session::connect(&self.url, &self.user, &self.pass),
+            connection: libsql_client::Connection::connect(&self.url, &self.user, &self.pass),
         }))
     }
 
