@@ -25,6 +25,7 @@ migrate = ["sqlx-macros-core/migrate"]
 # database
 mysql = ["sqlx-macros-core/mysql"]
 postgres = ["sqlx-macros-core/postgres"]
+sqlite-nonbundled = ["sqlx-macros-core/sqlite-nonbundled"]
 sqlite = ["sqlx-macros-core/sqlite"]
 
 # type
