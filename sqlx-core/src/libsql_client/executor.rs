@@ -1,9 +1,9 @@
 use crate::describe::Describe;
 use crate::error::Error;
 use crate::executor::{Execute, Executor};
-use crate::libsql_http::{
-    LibsqlHttp, LibsqlHttpConnection, LibsqlHttpQueryResult, LibsqlHttpRow, LibsqlHttpStatement,
-    LibsqlHttpTypeInfo,
+use crate::libsql_client::{
+    LibsqlClient, LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow, LibsqlClientStatement,
+    LibsqlClientTypeInfo,
 };
 use ahash::AHashMap as HashMap;
 use either::Either;
@@ -12,13 +12,13 @@ use futures_core::stream::BoxStream;
 use futures_util::{TryFutureExt, TryStreamExt};
 use std::sync::Arc;
 
-impl<'c> Executor<'c> for &'c mut LibsqlHttpConnection {
-    type Database = LibsqlHttp;
+impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
+    type Database = LibsqlClient;
 
     fn fetch_many<'e, 'q: 'e, E: 'q>(
         self,
         mut query: E,
-    ) -> BoxStream<'e, Result<Either<LibsqlHttpQueryResult, LibsqlHttpRow>, Error>>
+    ) -> BoxStream<'e, Result<Either<LibsqlClientQueryResult, LibsqlClientRow>, Error>>
     where
         'c: 'e,
         E: Execute<'q, Self::Database>,
@@ -33,7 +33,7 @@ impl<'c> Executor<'c> for &'c mut LibsqlHttpConnection {
     fn fetch_optional<'e, 'q: 'e, E: 'q>(
         self,
         mut query: E,
-    ) -> BoxFuture<'e, Result<Option<LibsqlHttpRow>, Error>>
+    ) -> BoxFuture<'e, Result<Option<LibsqlClientRow>, Error>>
     where
         'c: 'e,
         E: Execute<'q, Self::Database>,
@@ -48,13 +48,13 @@ impl<'c> Executor<'c> for &'c mut LibsqlHttpConnection {
     fn prepare_with<'e, 'q: 'e>(
         self,
         sql: &'q str,
-        _parameters: &[LibsqlHttpTypeInfo],
-    ) -> BoxFuture<'e, Result<LibsqlHttpStatement<'q>, Error>>
+        _parameters: &[LibsqlClientTypeInfo],
+    ) -> BoxFuture<'e, Result<LibsqlClientStatement<'q>, Error>>
     where
         'c: 'e,
     {
         Box::pin(async move {
-            Ok(LibsqlHttpStatement {
+            Ok(LibsqlClientStatement {
                 sql: sql.into(),
                 parameters: 0,                          // FIXME!!!!
                 columns: Arc::new(vec![]),              // FIXME!!!!
@@ -67,7 +67,7 @@ impl<'c> Executor<'c> for &'c mut LibsqlHttpConnection {
     fn describe<'e, 'q: 'e>(
         self,
         sql: &'q str,
-    ) -> BoxFuture<'e, Result<Describe<LibsqlHttp>, Error>>
+    ) -> BoxFuture<'e, Result<Describe<LibsqlClient>, Error>>
     where
         'c: 'e,
     {

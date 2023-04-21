@@ -111,7 +111,7 @@ postgres = ["sqlx-core/postgres", "sqlx-macros/postgres"]
 mysql = ["sqlx-core/mysql", "sqlx-macros/mysql"]
 sqlite = ["sqlx-core/sqlite", "sqlx-macros/sqlite"]
 mssql = ["sqlx-core/mssql", "sqlx-macros/mssql"]
-libsql-http = ["sqlx-core/libsql-http", "sqlx-macros/libsql-http"]
+libsql-client = ["sqlx-core/libsql-client", "sqlx-macros/libsql-client"]
 
 # types
 bigdecimal = ["sqlx-core/bigdecimal", "sqlx-macros/bigdecimal"]

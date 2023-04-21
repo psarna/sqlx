@@ -1,14 +1,14 @@
 use crate::arguments::Arguments;
 use crate::encode::{Encode, IsNull};
 use crate::error::Error;
-use crate::libsql_http::LibsqlHttp;
+use crate::libsql_client::LibsqlClient;
 use atoi::atoi;
 use std::borrow::Cow;
 
 const LIBSQL_OK: i32 = 0;
 
 #[derive(Debug, Clone)]
-pub enum LibsqlHttpArgumentValue<'q> {
+pub enum LibsqlClientArgumentValue<'q> {
     Null,
     Text(Cow<'q, str>),
     Blob(Cow<'q, [u8]>),
@@ -18,23 +18,23 @@ pub enum LibsqlHttpArgumentValue<'q> {
 }
 
 #[derive(Default, Debug, Clone)]
-pub struct LibsqlHttpArguments<'q> {
-    pub(crate) values: Vec<LibsqlHttpArgumentValue<'q>>,
+pub struct LibsqlClientArguments<'q> {
+    pub(crate) values: Vec<LibsqlClientArgumentValue<'q>>,
 }
 
-impl<'q> LibsqlHttpArguments<'q> {
+impl<'q> LibsqlClientArguments<'q> {
     pub(crate) fn add<T>(&mut self, value: T)
     where
-        T: Encode<'q, LibsqlHttp>,
+        T: Encode<'q, LibsqlClient>,
     {
         if let IsNull::Yes = value.encode(&mut self.values) {
-            self.values.push(LibsqlHttpArgumentValue::Null);
+            self.values.push(LibsqlClientArgumentValue::Null);
         }
     }
 }
 
-impl<'q> Arguments<'q> for LibsqlHttpArguments<'q> {
-    type Database = LibsqlHttp;
+impl<'q> Arguments<'q> for LibsqlClientArguments<'q> {
+    type Database = LibsqlClient;
 
     fn reserve(&mut self, len: usize, _size_hint: usize) {
         self.values.reserve(len);

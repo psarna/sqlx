@@ -29,15 +29,15 @@ pub(crate) enum DataType {
 /// Type information for a LibSQL http client type.
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
-pub struct LibsqlHttpTypeInfo(pub(crate) DataType);
+pub struct LibsqlClientTypeInfo(pub(crate) DataType);
 
-impl Display for LibsqlHttpTypeInfo {
+impl Display for LibsqlClientTypeInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.pad(self.name())
     }
 }
 
-impl TypeInfo for LibsqlHttpTypeInfo {
+impl TypeInfo for LibsqlClientTypeInfo {
     fn is_null(&self) -> bool {
         matches!(self.0, DataType::Null)
     }

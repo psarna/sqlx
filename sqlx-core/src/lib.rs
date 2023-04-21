@@ -15,7 +15,7 @@
 // to the sqlite module.
 #![cfg_attr(feature = "sqlite", deny(unsafe_code))]
 #![cfg_attr(
-    not(any(feature = "libsql-http", feature = "sqlite")),
+    not(any(feature = "libsql-client", feature = "sqlite")),
     forbid(unsafe_code)
 )]
 
@@ -109,9 +109,9 @@ pub mod mysql;
 #[cfg_attr(docsrs, doc(cfg(feature = "mssql")))]
 pub mod mssql;
 
-#[cfg(feature = "libsql-http")]
-#[cfg_attr(docsrs, doc(cfg(feature = "libsql-http")))]
-pub mod libsql_http;
+#[cfg(feature = "libsql-client")]
+#[cfg_attr(docsrs, doc(cfg(feature = "libsql-client")))]
+pub mod libsql_client;
 
 // Implements test support with automatic DB management.
 #[cfg(feature = "migrate")]

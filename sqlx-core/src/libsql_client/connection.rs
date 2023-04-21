@@ -5,17 +5,17 @@ use log::LevelFilter;
 use std::time::Duration;
 
 use crate::error::Error;
-use crate::libsql_http::LibsqlHttp;
+use crate::libsql_client::LibsqlClient;
 use crate::transaction::Transaction;
 
 #[derive(Clone, Debug)]
-pub struct LibsqlHttpConnection {
+pub struct LibsqlClientConnection {
     connection: libsql_client::Connection,
 }
 
-impl Connection for LibsqlHttpConnection {
-    type Database = LibsqlHttp;
-    type Options = LibsqlHttpConnectOptions;
+impl Connection for LibsqlClientConnection {
+    type Database = LibsqlClient;
+    type Options = LibsqlClientConnectOptions;
 
     fn close(self) -> BoxFuture<'static, Result<(), Error>> {
         Box::pin(future::ok(()))
@@ -55,24 +55,24 @@ impl Connection for LibsqlHttpConnection {
     }
 }
 
-impl LibsqlHttpConnection {
+impl LibsqlClientConnection {
     pub fn connect_with_ctx<D>(ctx: &worker::RouteContext<D>) -> BoxFuture<'_, Result<Self, Error>>
     where
         Self: Sized,
     {
-        let options = LibsqlHttpConnectOptions::try_from(ctx);
+        let options = LibsqlClientConnectOptions::try_from(ctx);
         Box::pin(async move { options?.connect().await })
     }
 }
 
 #[derive(Clone, Debug)]
-pub struct LibsqlHttpConnectOptions {
+pub struct LibsqlClientConnectOptions {
     url: String,
     user: String,
     pass: String,
 }
 
-impl<D> TryFrom<&worker::RouteContext<D>> for LibsqlHttpConnectOptions {
+impl<D> TryFrom<&worker::RouteContext<D>> for LibsqlClientConnectOptions {
     type Error = Error;
 
     fn try_from(ctx: &worker::RouteContext<D>) -> Result<Self, Error> {
@@ -93,7 +93,7 @@ impl<D> TryFrom<&worker::RouteContext<D>> for LibsqlHttpConnectOptions {
     }
 }
 
-impl std::str::FromStr for LibsqlHttpConnectOptions {
+impl std::str::FromStr for LibsqlClientConnectOptions {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -106,8 +106,8 @@ impl std::str::FromStr for LibsqlHttpConnectOptions {
     }
 }
 
-impl ConnectOptions for LibsqlHttpConnectOptions {
-    type Connection = LibsqlHttpConnection;
+impl ConnectOptions for LibsqlClientConnectOptions {
+    type Connection = LibsqlClientConnection;
 
     /// Establish a new database connection with the options specified by `self`.
     fn connect(&self) -> BoxFuture<'_, Result<Self::Connection, Error>>

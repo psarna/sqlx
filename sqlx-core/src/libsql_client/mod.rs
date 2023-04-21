@@ -12,15 +12,15 @@ mod type_info;
 mod value;
 
 use crate::statement::Statement;
-use arguments::{LibsqlHttpArgumentValue, LibsqlHttpArguments};
-use column::LibsqlHttpColumn;
-pub use connection::{LibsqlHttpConnectOptions, LibsqlHttpConnection};
-pub use database::LibsqlHttp;
-use query_result::LibsqlHttpQueryResult;
-use row::LibsqlHttpRow;
-use transaction::LibsqlHttpTransactionManager;
-use type_info::LibsqlHttpTypeInfo;
-use value::{LibsqlHttpValue, LibsqlHttpValueRef};
+use arguments::{LibsqlClientArgumentValue, LibsqlClientArguments};
+use column::LibsqlClientColumn;
+pub use connection::{LibsqlClientConnectOptions, LibsqlClientConnection};
+pub use database::LibsqlClient;
+use query_result::LibsqlClientQueryResult;
+use row::LibsqlClientRow;
+use transaction::LibsqlClientTransactionManager;
+use type_info::LibsqlClientTypeInfo;
+use value::{LibsqlClientValue, LibsqlClientValueRef};
 
 use crate::column::ColumnIndex;
 use crate::error::Error;
@@ -32,18 +32,18 @@ use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 #[allow(clippy::rc_buffer)]
-pub struct LibsqlHttpStatement<'q> {
+pub struct LibsqlClientStatement<'q> {
     pub(crate) sql: Cow<'q, str>,
     pub(crate) parameters: usize,
-    pub(crate) columns: Arc<Vec<LibsqlHttpColumn>>,
+    pub(crate) columns: Arc<Vec<LibsqlClientColumn>>,
     pub(crate) column_names: Arc<HashMap<UStr, usize>>,
 }
 
-impl<'q> Statement<'q> for LibsqlHttpStatement<'q> {
-    type Database = LibsqlHttp;
+impl<'q> Statement<'q> for LibsqlClientStatement<'q> {
+    type Database = LibsqlClient;
 
-    fn to_owned(&self) -> LibsqlHttpStatement<'static> {
-        LibsqlHttpStatement::<'static> {
+    fn to_owned(&self) -> LibsqlClientStatement<'static> {
+        LibsqlClientStatement::<'static> {
             sql: Cow::Owned(self.sql.clone().into_owned()),
             parameters: self.parameters,
             columns: Arc::clone(&self.columns),
@@ -55,19 +55,19 @@ impl<'q> Statement<'q> for LibsqlHttpStatement<'q> {
         &self.sql
     }
 
-    fn parameters(&self) -> Option<Either<&[LibsqlHttpTypeInfo], usize>> {
+    fn parameters(&self) -> Option<Either<&[LibsqlClientTypeInfo], usize>> {
         Some(Either::Right(self.parameters))
     }
 
-    fn columns(&self) -> &[LibsqlHttpColumn] {
+    fn columns(&self) -> &[LibsqlClientColumn] {
         &self.columns
     }
 
-    impl_statement_query!(LibsqlHttpArguments<'_>);
+    impl_statement_query!(LibsqlClientArguments<'_>);
 }
 
-impl ColumnIndex<LibsqlHttpStatement<'_>> for &'_ str {
-    fn index(&self, statement: &LibsqlHttpStatement<'_>) -> Result<usize, Error> {
+impl ColumnIndex<LibsqlClientStatement<'_>> for &'_ str {
+    fn index(&self, statement: &LibsqlClientStatement<'_>) -> Result<usize, Error> {
         statement
             .column_names
             .get(*self)
