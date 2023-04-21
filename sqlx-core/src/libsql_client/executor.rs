@@ -2,14 +2,13 @@ use crate::describe::Describe;
 use crate::error::Error;
 use crate::executor::{Execute, Executor};
 use crate::libsql_client::{
-    LibsqlClient, LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow, LibsqlClientStatement,
-    LibsqlClientTypeInfo,
+    LibsqlClient, LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow,
+    LibsqlClientStatement, LibsqlClientTypeInfo,
 };
 use ahash::AHashMap as HashMap;
 use either::Either;
 use futures_core::future::BoxFuture;
 use futures_core::stream::BoxStream;
-use futures_util::{TryFutureExt, TryStreamExt};
 use std::sync::Arc;
 
 impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {

@@ -1,11 +1,5 @@
-use crate::database::{Database, HasValueRef};
-use crate::decode::Decode;
-use crate::error::{mismatched_types, Error};
 use crate::libsql_client::{LibsqlClient, LibsqlClientTypeInfo};
-use crate::type_info::TypeInfo;
-use crate::types::Type;
 use crate::value::{Value, ValueRef};
-use libsql_client::CellValue;
 use std::borrow::Cow;
 
 enum LibsqlClientValueData<'r> {
@@ -44,7 +38,7 @@ impl<'r> ValueRef<'r> for LibsqlClientValueRef<'r> {
 
 #[derive(Clone)]
 pub struct LibsqlClientValue {
-    pub(crate) value: Option<CellValue>,
+    pub(crate) value: Option<libsql_client::Value>,
     pub(crate) type_info: LibsqlClientTypeInfo,
 }
 

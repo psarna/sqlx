@@ -1,8 +1,8 @@
 use crate::database::{Database, HasArguments, HasStatement, HasStatementCache, HasValueRef};
 use crate::libsql_client::{
     LibsqlClientArgumentValue, LibsqlClientArguments, LibsqlClientColumn, LibsqlClientConnection,
-    LibsqlClientQueryResult, LibsqlClientRow, LibsqlClientStatement, LibsqlClientTransactionManager,
-    LibsqlClientTypeInfo, LibsqlClientValue, LibsqlClientValueRef,
+    LibsqlClientQueryResult, LibsqlClientRow, LibsqlClientStatement,
+    LibsqlClientTransactionManager, LibsqlClientTypeInfo, LibsqlClientValue, LibsqlClientValueRef,
 };
 
 /// LibsqlClient database driver.

@@ -7,7 +7,9 @@ use crate::HashMap;
 use crate::column::ColumnIndex;
 use crate::error::Error;
 use crate::ext::ustr::UStr;
-use crate::libsql_client::{LibsqlClient, LibsqlClientColumn, LibsqlClientValue, LibsqlClientValueRef};
+use crate::libsql_client::{
+    LibsqlClient, LibsqlClientColumn, LibsqlClientValue, LibsqlClientValueRef,
+};
 use crate::row::Row;
 
 /// Implementation of [`Row`] for LibsqlClient.

@@ -1,8 +1,6 @@
 use crate::arguments::Arguments;
 use crate::encode::{Encode, IsNull};
-use crate::error::Error;
 use crate::libsql_client::LibsqlClient;
-use atoi::atoi;
 use std::borrow::Cow;
 
 const LIBSQL_OK: i32 = 0;

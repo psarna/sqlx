@@ -8,9 +8,15 @@ use crate::error::Error;
 use crate::libsql_client::LibsqlClient;
 use crate::transaction::Transaction;
 
-#[derive(Clone, Debug)]
 pub struct LibsqlClientConnection {
-    connection: libsql_client::Connection,
+    client: libsql_client::client::GenericClient,
+}
+
+// FIXME: add details, or just implement Debug for GenericClient
+impl std::fmt::Debug for LibsqlClientConnection {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("LibsqlClientConnection").finish()
+    }
 }
 
 impl Connection for LibsqlClientConnection {
@@ -55,42 +61,10 @@ impl Connection for LibsqlClientConnection {
     }
 }
 
-impl LibsqlClientConnection {
-    pub fn connect_with_ctx<D>(ctx: &worker::RouteContext<D>) -> BoxFuture<'_, Result<Self, Error>>
-    where
-        Self: Sized,
-    {
-        let options = LibsqlClientConnectOptions::try_from(ctx);
-        Box::pin(async move { options?.connect().await })
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct LibsqlClientConnectOptions {
-    url: String,
-    user: String,
-    pass: String,
-}
-
-impl<D> TryFrom<&worker::RouteContext<D>> for LibsqlClientConnectOptions {
-    type Error = Error;
-
-    fn try_from(ctx: &worker::RouteContext<D>) -> Result<Self, Error> {
-        Ok(Self {
-            url: ctx
-                .var("LIBSQL_CLIENT_URL")
-                .map_err(|e| Error::Protocol(e.to_string()))?
-                .to_string(),
-            user: ctx
-                .var("LIBSQL_CLIENT_USER")
-                .map_err(|e| Error::Protocol(e.to_string()))?
-                .to_string(),
-            pass: ctx
-                .var("LIBSQL_CLIENT_PASS")
-                .map_err(|e| Error::Protocol(e.to_string()))?
-                .to_string(),
-        })
-    }
+    pub url: String,
+    pub auth_token: String,
 }
 
 impl std::str::FromStr for LibsqlClientConnectOptions {
@@ -100,8 +74,7 @@ impl std::str::FromStr for LibsqlClientConnectOptions {
         // FIXME: actually parse the information from uri
         Ok(Self {
             url: String::new(),
-            user: String::new(),
-            pass: String::new(),
+            auth_token: String::new(),
         })
     }
 }
@@ -114,9 +87,23 @@ impl ConnectOptions for LibsqlClientConnectOptions {
     where
         Self::Connection: Sized,
     {
-        Box::pin(future::ok(Self::Connection {
-            connection: libsql_client::Connection::connect(&self.url, &self.user, &self.pass),
-        }))
+        use futures_util::TryFutureExt;
+        let url = match url::Url::parse(&self.url) {
+            Ok(url) => url,
+            Err(err) => return Box::pin(future::err(Error::Protocol(err.to_string()))),
+        };
+        let auth_token = Some(self.auth_token.clone());
+        let client_fut = async move {
+            match libsql_client::new_client_from_config(libsql_client::Config { url, auth_token })
+                .await
+            {
+                Ok(client) => Ok(client),
+                Err(err) => Err(Error::Protocol(err.to_string())),
+            }
+        };
+        let connect_fut =
+            client_fut.and_then(|client| async move { Ok(Self::Connection { client }) });
+        Box::pin(connect_fut)
     }
 
     /// Log executed statements with the specified `level`

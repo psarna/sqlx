@@ -1,5 +1,4 @@
 use std::fmt::{self, Display, Formatter};
-use std::os::raw::c_int;
 use std::str::FromStr;
 
 use crate::error::BoxDynError;
