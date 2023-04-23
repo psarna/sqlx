@@ -10,6 +10,7 @@ members = [
     "sqlx-mysql",
     "sqlx-postgres",
     "sqlx-sqlite",
+    "sqlx-libsql-client",
 # FIXME: uncomment these for full release
 #    "examples/mysql/todos",
 #    "examples/postgres/axum-social-with-tests",
@@ -19,7 +20,7 @@ members = [
 #    "examples/postgres/todos",
 #    "examples/postgres/mockable-todos",
 #    "examples/postgres/transaction",
-#    "examples/sqlite/todos",
+    "examples/sqlite/todos",
 ]
 
 [workspace.package]
@@ -54,10 +55,10 @@ rustdoc-args = ["--cfg", "docsrs"]
 [features]
 default = ["any", "macros", "migrate", "json"]
 macros = ["sqlx-macros"]
-migrate = ["sqlx-core/migrate", "sqlx-macros?/migrate", "sqlx-mysql?/migrate", "sqlx-postgres?/migrate", "sqlx-sqlite?/migrate"]
+migrate = ["sqlx-core/migrate", "sqlx-macros?/migrate", "sqlx-mysql?/migrate", "sqlx-postgres?/migrate", "sqlx-sqlite?/migrate", "sqlx-libsql-client?/migrate"]
 
 # intended mainly for CI and docs
-all-databases = ["mysql", "sqlite", "postgres", "any"]
+all-databases = ["mysql", "sqlite", "postgres", "libsql-client", "any"]
 _unstable-all-types = [
     "bigdecimal",
     "rust_decimal",
@@ -94,14 +95,16 @@ _rt-async-std = []
 _rt-tokio = []
 
 # database
-any = ["sqlx-core/any", "sqlx-mysql?/any", "sqlx-postgres?/any", "sqlx-sqlite?/any"]
+any = ["sqlx-core/any", "sqlx-mysql?/any", "sqlx-postgres?/any", "sqlx-sqlite?/any", "sqlx-libsql-client?/any"]
 postgres = ["sqlx-postgres", "sqlx-macros?/postgres"]
 mysql = ["sqlx-mysql", "sqlx-macros?/mysql"]
 sqlite = ["sqlx-sqlite", "sqlx-macros?/sqlite"]
+libsql-client = ["sqlx-libsql-client", "sqlx-macros?/libsql-client"]
 
 # types
 json = ["sqlx-macros?/json", "sqlx-mysql?/json", "sqlx-postgres?/json", "sqlx-sqlite?/json"]
 
+# TODO: add libsql-client versions too
 bigdecimal = ["sqlx-core/bigdecimal", "sqlx-macros?/bigdecimal", "sqlx-mysql?/bigdecimal", "sqlx-postgres?/bigdecimal"]
 bit-vec = ["sqlx-core/bit-vec", "sqlx-macros?/bit-vec", "sqlx-postgres?/bit-vec"]
 chrono = ["sqlx-core/chrono", "sqlx-macros?/chrono", "sqlx-mysql?/chrono", "sqlx-postgres?/chrono", "sqlx-sqlite?/chrono"]
@@ -122,6 +125,7 @@ sqlx-macros = { version = "=0.7.0-alpha.2", path = "sqlx-macros" }
 sqlx-mysql = { version = "=0.7.0-alpha.2", path = "sqlx-mysql" }
 sqlx-postgres = { version = "=0.7.0-alpha.2", path = "sqlx-postgres" }
 sqlx-sqlite = { version = "=0.7.0-alpha.2", path = "sqlx-sqlite" }
+sqlx-libsql-client = { version = "=0.7.0-alpha.2", path = "sqlx-libsql-client" }
 
 # Facade crate (for reference from sqlx-cli)
 sqlx = { version = "=0.7.0-alpha.2", path = "." }
@@ -156,6 +160,7 @@ sqlx-macros = { workspace = true, default-features = false, optional = true }
 sqlx-mysql = { workspace = true, optional = true }
 sqlx-postgres = { workspace = true, optional = true }
 sqlx-sqlite = { workspace = true, optional = true }
+sqlx-libsql-client = { workspace = true, optional = true }
 
 [dev-dependencies]
 anyhow = "1.0.52"

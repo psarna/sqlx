@@ -22,10 +22,12 @@ migrate = ["sqlx-core/migrate"]
 mysql = ["sqlx-mysql"]
 postgres = ["sqlx-postgres"]
 sqlite = ["sqlx-sqlite"]
+libsql-client = ["sqlx-libsql-client"]
 
 # type integrations
 json = ["sqlx-core/json", "sqlx-mysql?/json", "sqlx-sqlite?/json"]
 
+# TODO: add libsql-client versions once implemented
 bigdecimal = ["sqlx-core/bigdecimal", "sqlx-mysql?/bigdecimal", "sqlx-postgres?/bigdecimal"]
 bit-vec = ["sqlx-core/bit-vec", "sqlx-postgres?/bit-vec"]
 chrono = ["sqlx-core/chrono", "sqlx-mysql?/chrono", "sqlx-postgres?/chrono", "sqlx-sqlite?/chrono"]
@@ -40,6 +42,7 @@ sqlx-core = { workspace = true, default-features = false, features = ["offline"]
 sqlx-mysql = { workspace = true, features = ["offline", "migrate"], optional = true }
 sqlx-postgres = { workspace = true, features = ["offline", "migrate"], optional = true }
 sqlx-sqlite = { workspace = true, features = ["offline", "migrate"], optional = true }
+sqlx-libsql-client = { workspace = true, optional = true }
 
 async-std = { workspace = true, optional = true }
 tokio = { workspace = true, optional = true }
