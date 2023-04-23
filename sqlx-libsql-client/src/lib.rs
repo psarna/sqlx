@@ -3,27 +3,21 @@
 #[macro_use]
 extern crate sqlx_core;
 
-pub use arguments::{LibsqlClientArgumentValue, LibsqlClientArguments};
+pub use arguments::{LibsqlClientArguments};
 pub use column::LibsqlClientColumn;
-pub use connection::{LockedLibsqlClientHandle, LibsqlClientConnection};
+pub use connection::{LibsqlClientConnection};
 pub use database::LibsqlClient;
 pub use error::LibsqlClientError;
-pub use options::{
-    LibsqlClientAutoVacuum, LibsqlClientConnectOptions, LibsqlClientJournalMode, LibsqlClientLockingMode, LibsqlClientSynchronous,
-};
 pub use query_result::LibsqlClientQueryResult;
 pub use row::LibsqlClientRow;
 pub use statement::LibsqlClientStatement;
 pub use transaction::LibsqlClientTransactionManager;
 pub use type_info::LibsqlClientTypeInfo;
 pub use value::{LibsqlClientValue, LibsqlClientValueRef};
-
-use crate::connection::establish::EstablishParams;
+pub use options::LibsqlClientConnectOptions;
 
 pub(crate) use sqlx_core::driver_prelude::*;
 
-use sqlx_core::describe::Describe;
-use sqlx_core::error::Error;
 use sqlx_core::executor::Executor;
 
 mod arguments;
@@ -64,7 +58,7 @@ pub trait LibsqlClientExecutor<'c>: Executor<'c, Database = LibsqlClient> {}
 impl<'c, T: Executor<'c, Database = LibsqlClient>> LibsqlClientExecutor<'c> for T {}
 
 // NOTE: required due to the lack of lazy normalization
-impl_into_arguments_for_arguments!(LibsqlClientArguments<'q>);
+impl_into_arguments_for_arguments!(LibsqlClientArguments);
 impl_column_index_for_row!(LibsqlClientRow);
 impl_column_index_for_statement!(LibsqlClientStatement);
 impl_acquire!(LibsqlClient, LibsqlClientConnection);

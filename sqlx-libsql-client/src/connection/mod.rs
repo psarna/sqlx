@@ -11,7 +11,6 @@ use crate::{LibsqlClient, LibsqlClientConnectOptions};
 pub(crate) use sqlx_core::connection::*;
 
 pub(crate) mod describe;
-pub(crate) mod execute;
 mod executor;
 
 /// A connection to an open [LibsqlClient] database.

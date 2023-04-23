@@ -29,15 +29,15 @@ pub(crate) enum DataType {
 /// Type information for a SQLite type.
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
-pub struct SqliteTypeInfo(pub(crate) DataType);
+pub struct LibsqlClientTypeInfo(pub(crate) DataType);
 
-impl Display for SqliteTypeInfo {
+impl Display for LibsqlClientTypeInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.pad(self.name())
     }
 }
 
-impl TypeInfo for SqliteTypeInfo {
+impl TypeInfo for LibsqlClientTypeInfo {
     fn is_null(&self) -> bool {
         matches!(self.0, DataType::Null)
     }

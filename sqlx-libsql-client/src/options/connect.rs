@@ -1,4 +1,4 @@
-use crate::{SqliteConnectOptions, SqliteConnection};
+use crate::{LibsqlClientConnectOptions, LibsqlClientConnection};
 use futures_core::future::BoxFuture;
 use log::LevelFilter;
 use sqlx_core::connection::ConnectOptions;
@@ -8,11 +8,11 @@ use std::fmt::Write;
 use std::time::Duration;
 use url::Url;
 
-impl ConnectOptions for SqliteConnectOptions {
-    type Connection = SqliteConnection;
+impl ConnectOptions for LibsqlClientConnectOptions {
+    type Connection = LibsqlClientConnection;
 
     fn from_url(url: &Url) -> Result<Self, Error> {
-        Self::from_db_and_params(url.path(), url.query())
+        Self::from_url_and_token(url.path(), url.query())
     }
 
     fn connect(&self) -> BoxFuture<'_, Result<Self::Connection, Error>>
@@ -20,7 +20,7 @@ impl ConnectOptions for SqliteConnectOptions {
         Self::Connection: Sized,
     {
         Box::pin(async move {
-            let mut conn = SqliteConnection::establish(self).await?;
+            let mut conn = LibsqlClientConnection::establish(self).await?;
 
             // Execute PRAGMAs
             conn.execute(&*self.pragma_string()).await?;
@@ -48,7 +48,7 @@ impl ConnectOptions for SqliteConnectOptions {
     }
 }
 
-impl SqliteConnectOptions {
+impl LibsqlClientConnectOptions {
     /// Collect all `PRAMGA` commands into a single string
     pub(crate) fn pragma_string(&self) -> String {
         let mut string = String::new();

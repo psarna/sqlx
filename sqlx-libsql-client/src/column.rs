@@ -1,18 +1,17 @@
-use crate::ext::ustr::UStr;
-use crate::{Sqlite, SqliteTypeInfo};
+use crate::{LibsqlClient, LibsqlClientTypeInfo};
 
 pub(crate) use sqlx_core::column::*;
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
-pub struct SqliteColumn {
-    pub(crate) name: UStr,
+pub struct LibsqlClientColumn {
+    pub(crate) name: String,
     pub(crate) ordinal: usize,
-    pub(crate) type_info: SqliteTypeInfo,
+    pub(crate) type_info: LibsqlClientTypeInfo,
 }
 
-impl Column for SqliteColumn {
-    type Database = Sqlite;
+impl Column for LibsqlClientColumn {
+    type Database = LibsqlClient;
 
     fn ordinal(&self) -> usize {
         self.ordinal
@@ -22,7 +21,7 @@ impl Column for SqliteColumn {
         &*self.name
     }
 
-    fn type_info(&self) -> &SqliteTypeInfo {
+    fn type_info(&self) -> &LibsqlClientTypeInfo {
         &self.type_info
     }
 }

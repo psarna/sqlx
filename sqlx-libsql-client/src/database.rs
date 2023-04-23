@@ -1,9 +1,9 @@
 pub(crate) use sqlx_core::database::{
-    Database, HasArguments, HasStatement, HasStatementCache, HasValueRef,
+    Database, HasArguments, HasStatement, HasValueRef,
 };
 
 use crate::{
-    LibsqlClientArgumentValue, LibsqlClientArguments, LibsqlClientColumn, LibsqlClientConnection, LibsqlClientQueryResult,
+    LibsqlClientArguments, LibsqlClientColumn, LibsqlClientConnection, LibsqlClientQueryResult,
     LibsqlClientRow, LibsqlClientStatement, LibsqlClientTransactionManager, LibsqlClientTypeInfo, LibsqlClientValue,
     LibsqlClientValueRef,
 };
@@ -41,9 +41,9 @@ impl<'r> HasValueRef<'r> for LibsqlClient {
 impl<'q> HasArguments<'q> for LibsqlClient {
     type Database = LibsqlClient;
 
-    type Arguments = LibsqlClientArguments<'q>;
+    type Arguments = LibsqlClientArguments;
 
-    type ArgumentBuffer = Vec<LibsqlClientArgumentValue<'q>>;
+    type ArgumentBuffer = Vec<libsql_client::Value>;
 }
 
 impl<'q> HasStatement<'q> for LibsqlClient {
