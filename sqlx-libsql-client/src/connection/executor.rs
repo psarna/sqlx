@@ -1,5 +1,5 @@
 use crate::{
-    Sqlite, SqliteConnection, SqliteQueryResult, SqliteRow, SqliteStatement, SqliteTypeInfo,
+    LibsqlClient, LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow, LibsqlClientStatement, LibsqlClientTypeInfo,
 };
 use futures_core::future::BoxFuture;
 use futures_core::stream::BoxStream;
@@ -9,18 +9,18 @@ use sqlx_core::error::Error;
 use sqlx_core::executor::{Execute, Executor};
 use sqlx_core::Either;
 
-impl<'c> Executor<'c> for &'c mut SqliteConnection {
-    type Database = Sqlite;
+impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
+    type Database = LibsqlClient;
 
     fn fetch_many<'e, 'q: 'e, E: 'q>(
         self,
         mut query: E,
-    ) -> BoxStream<'e, Result<Either<SqliteQueryResult, SqliteRow>, Error>>
+    ) -> BoxStream<'e, Result<Either<LibsqlClientQueryResult, LibsqlClientRow>, Error>>
     where
         'c: 'e,
         E: Execute<'q, Self::Database>,
     {
-        let sql = query.sql();
+        /*let sql = query.sql();
         let arguments = query.take_arguments();
         let persistent = query.persistent() && arguments.is_some();
 
@@ -29,18 +29,19 @@ impl<'c> Executor<'c> for &'c mut SqliteConnection {
                 .execute(sql, arguments, self.row_channel_size, persistent)
                 .map_ok(flume::Receiver::into_stream)
                 .try_flatten_stream(),
-        )
+        )*/
+        todo!()
     }
 
     fn fetch_optional<'e, 'q: 'e, E: 'q>(
         self,
         mut query: E,
-    ) -> BoxFuture<'e, Result<Option<SqliteRow>, Error>>
+    ) -> BoxFuture<'e, Result<Option<LibsqlClientRow>, Error>>
     where
         'c: 'e,
         E: Execute<'q, Self::Database>,
     {
-        let sql = query.sql();
+        /*let sql = query.sql();
         let arguments = query.take_arguments();
         let persistent = query.persistent() && arguments.is_some();
 
@@ -60,32 +61,35 @@ impl<'c> Executor<'c> for &'c mut SqliteConnection {
             }
 
             Ok(None)
-        })
+        })*/
+        todo!()
     }
 
     fn prepare_with<'e, 'q: 'e>(
         self,
         sql: &'q str,
-        _parameters: &[SqliteTypeInfo],
-    ) -> BoxFuture<'e, Result<SqliteStatement<'q>, Error>>
+        _parameters: &[LibsqlClientTypeInfo],
+    ) -> BoxFuture<'e, Result<LibsqlClientStatement<'q>, Error>>
     where
         'c: 'e,
     {
-        Box::pin(async move {
+        /*Box::pin(async move {
             let statement = self.worker.prepare(sql).await?;
 
-            Ok(SqliteStatement {
+            Ok(LibsqlClientStatement {
                 sql: sql.into(),
                 ..statement
             })
-        })
+        })*/
+        todo!()
     }
 
     #[doc(hidden)]
-    fn describe<'e, 'q: 'e>(self, sql: &'q str) -> BoxFuture<'e, Result<Describe<Sqlite>, Error>>
+    fn describe<'e, 'q: 'e>(self, sql: &'q str) -> BoxFuture<'e, Result<Describe<LibsqlClient>, Error>>
     where
         'c: 'e,
     {
-        Box::pin(self.worker.describe(sql))
+        //Box::pin(self.worker.describe(sql))
+        todo!()
     }
 }

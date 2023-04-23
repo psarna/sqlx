@@ -1,6 +1,3 @@
-use std::path::Path;
-
-mod auto_vacuum;
 mod connect;
 mod parse;
 

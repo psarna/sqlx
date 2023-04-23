@@ -1,28 +1,31 @@
 use futures_core::future::BoxFuture;
 
-use crate::{Sqlite, SqliteConnection};
+use crate::{LibsqlClient, LibsqlClientConnection};
 use sqlx_core::error::Error;
 use sqlx_core::transaction::TransactionManager;
 
 /// Implementation of [`TransactionManager`] for SQLite.
-pub struct SqliteTransactionManager;
+pub struct LibsqlClientTransactionManager;
 
-impl TransactionManager for SqliteTransactionManager {
-    type Database = Sqlite;
+impl TransactionManager for LibsqlClientTransactionManager {
+    type Database = LibsqlClient;
 
-    fn begin(conn: &mut SqliteConnection) -> BoxFuture<'_, Result<(), Error>> {
-        Box::pin(conn.worker.begin())
+    fn begin(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
+        // FIXME: implement this
+        Box::pin(futures_core::future::ok(()))
     }
 
-    fn commit(conn: &mut SqliteConnection) -> BoxFuture<'_, Result<(), Error>> {
-        Box::pin(conn.worker.commit())
+    fn commit(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
+        // FIXME: implement this
+        Box::pin(futures_core::future::ok(()))
     }
 
-    fn rollback(conn: &mut SqliteConnection) -> BoxFuture<'_, Result<(), Error>> {
-        Box::pin(conn.worker.rollback())
+    fn rollback(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
+        // FIXME: implement this
+        Box::pin(futures_core::future::ok(()))
     }
 
-    fn start_rollback(conn: &mut SqliteConnection) {
-        conn.worker.start_rollback().ok();
+    fn start_rollback(conn: &mut LibsqlClientConnection) {
+        // FIXME: implement this
     }
 }

@@ -7,7 +7,7 @@ use crate::migrate::{AppliedMigration, Migration};
 use crate::migrate::{Migrate, MigrateDatabase};
 use crate::query::query;
 use crate::query_as::query_as;
-use crate::{Sqlite, SqliteConnectOptions, SqliteConnection, SqliteJournalMode};
+use crate::{LibsqlClient, LibsqlClientConnectOptions, LibsqlClientConnection};
 use futures_core::future::BoxFuture;
 use std::str::FromStr;
 use std::sync::atomic::Ordering;
@@ -16,16 +16,10 @@ use std::time::Instant;
 
 pub(crate) use sqlx_core::migrate::*;
 
-impl MigrateDatabase for Sqlite {
+impl MigrateDatabase for LibsqlClient {
     fn create_database(url: &str) -> BoxFuture<'_, Result<(), Error>> {
         Box::pin(async move {
-            let mut opts = SqliteConnectOptions::from_str(url)?.create_if_missing(true);
-
-            // Since it doesn't make sense to include this flag in the connection URL,
-            // we just use an `AtomicBool` to pass it.
-            if super::CREATE_DB_WAL.load(Ordering::Acquire) {
-                opts = opts.journal_mode(SqliteJournalMode::Wal);
-            }
+            let mut opts = LibsqlClientConnectOptions::from_str(url)?;
 
             // Opening a connection to sqlite creates the database
             let _ = opts
@@ -41,7 +35,7 @@ impl MigrateDatabase for Sqlite {
 
     fn database_exists(url: &str) -> BoxFuture<'_, Result<bool, Error>> {
         Box::pin(async move {
-            let options = SqliteConnectOptions::from_str(url)?;
+            let options = LibsqlClientConnectOptions::from_str(url)?;
 
             if options.in_memory {
                 Ok(true)
@@ -53,7 +47,7 @@ impl MigrateDatabase for Sqlite {
 
     fn drop_database(url: &str) -> BoxFuture<'_, Result<(), Error>> {
         Box::pin(async move {
-            let options = SqliteConnectOptions::from_str(url)?;
+            let options = LibsqlClientConnectOptions::from_str(url)?;
 
             if !options.in_memory {
                 fs::remove_file(&*options.filename).await?;
@@ -64,7 +58,7 @@ impl MigrateDatabase for Sqlite {
     }
 }
 
-impl Migrate for SqliteConnection {
+impl Migrate for LibsqlClientConnection {
     fn ensure_migrations_table(&mut self) -> BoxFuture<'_, Result<(), MigrateError>> {
         Box::pin(async move {
             // language=SQLite

@@ -14,7 +14,6 @@ pub(crate) mod describe;
 pub(crate) mod execute;
 mod executor;
 
-
 /// A connection to an open [LibsqlClient] database.
 ///
 /// Because SQLite is an in-process database accessed by blocking API calls, SQLx uses a background

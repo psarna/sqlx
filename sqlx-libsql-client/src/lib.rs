@@ -3,8 +3,6 @@
 #[macro_use]
 extern crate sqlx_core;
 
-use std::sync::atomic::AtomicBool;
-
 pub use arguments::{LibsqlClientArgumentValue, LibsqlClientArguments};
 pub use column::LibsqlClientColumn;
 pub use connection::{LockedLibsqlClientHandle, LibsqlClientConnection};

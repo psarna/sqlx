@@ -1,8 +1,5 @@
 use std::fmt::{self, Display, Formatter};
-use std::os::raw::c_int;
 use std::str::FromStr;
-
-use libsqlite3_sys::{SQLITE_BLOB, SQLITE_FLOAT, SQLITE_INTEGER, SQLITE_NULL, SQLITE_TEXT};
 
 use crate::error::BoxDynError;
 
@@ -63,21 +60,6 @@ impl TypeInfo for SqliteTypeInfo {
     }
 }
 
-impl DataType {
-    pub(crate) fn from_code(code: c_int) -> Self {
-        match code {
-            SQLITE_INTEGER => DataType::Int,
-            SQLITE_FLOAT => DataType::Float,
-            SQLITE_BLOB => DataType::Blob,
-            SQLITE_NULL => DataType::Null,
-            SQLITE_TEXT => DataType::Text,
-
-            // https://sqlite.org/c3ref/c_blob.html
-            _ => panic!("unknown data type code {}", code),
-        }
-    }
-}
-
 // note: this implementation is particularly important as this is how the macros determine
 //       what Rust type maps to what *declared* SQL type
 // <https://www.sqlite.org/datatype3.html#affname>
@@ -109,14 +91,6 @@ impl FromStr for DataType {
         })
     }
 }
-
-// #[cfg(feature = "any")]
-// impl From<SqliteTypeInfo> for crate::any::AnyTypeInfo {
-//     #[inline]
-//     fn from(ty: SqliteTypeInfo) -> Self {
-//         crate::any::AnyTypeInfo(crate::any::type_info::AnyTypeInfoKind::Sqlite(ty))
-//     }
-// }
 
 #[test]
 fn test_data_type_from_str() -> Result<(), BoxDynError> {
