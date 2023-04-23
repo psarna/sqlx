@@ -1,7 +1,7 @@
 use crate::encode::{Encode, IsNull};
 use crate::error::Error;
 use crate::statement::StatementHandle;
-use crate::Sqlite;
+use crate::LibsqlClient;
 use atoi::atoi;
 use libsqlite3_sys::SQLITE_OK;
 use std::borrow::Cow;
@@ -9,7 +9,7 @@ use std::borrow::Cow;
 pub(crate) use sqlx_core::arguments::*;
 
 #[derive(Debug, Clone)]
-pub enum SqliteArgumentValue<'q> {
+pub enum LibsqlClientArgumentValue<'q> {
     Null,
     Text(Cow<'q, str>),
     Blob(Cow<'q, [u8]>),
@@ -19,33 +19,33 @@ pub enum SqliteArgumentValue<'q> {
 }
 
 #[derive(Default, Debug, Clone)]
-pub struct SqliteArguments<'q> {
-    pub(crate) values: Vec<SqliteArgumentValue<'q>>,
+pub struct LibsqlClientArguments<'q> {
+    pub(crate) values: Vec<LibsqlClientArgumentValue<'q>>,
 }
 
-impl<'q> SqliteArguments<'q> {
+impl<'q> LibsqlClientArguments<'q> {
     pub(crate) fn add<T>(&mut self, value: T)
     where
-        T: Encode<'q, Sqlite>,
+        T: Encode<'q, LibsqlClient>,
     {
         if let IsNull::Yes = value.encode(&mut self.values) {
-            self.values.push(SqliteArgumentValue::Null);
+            self.values.push(LibsqlClientArgumentValue::Null);
         }
     }
 
-    pub(crate) fn into_static(self) -> SqliteArguments<'static> {
-        SqliteArguments {
+    pub(crate) fn into_static(self) -> LibsqlClientArguments<'static> {
+        LibsqlClientArguments {
             values: self
                 .values
                 .into_iter()
-                .map(SqliteArgumentValue::into_static)
+                .map(LibsqlClientArgumentValue::into_static)
                 .collect(),
         }
     }
 }
 
-impl<'q> Arguments<'q> for SqliteArguments<'q> {
-    type Database = Sqlite;
+impl<'q> Arguments<'q> for LibsqlClientArguments<'q> {
+    type Database = LibsqlClient;
 
     fn reserve(&mut self, len: usize, _size_hint: usize) {
         self.values.reserve(len);
@@ -59,7 +59,7 @@ impl<'q> Arguments<'q> for SqliteArguments<'q> {
     }
 }
 
-impl SqliteArguments<'_> {
+impl LibsqlClientArguments<'_> {
     pub(super) fn bind(&self, handle: &mut StatementHandle, offset: usize) -> Result<usize, Error> {
         let mut arg_i = offset;
         // for handle in &statement.handles {
@@ -105,9 +105,9 @@ impl SqliteArguments<'_> {
     }
 }
 
-impl SqliteArgumentValue<'_> {
-    fn into_static(self) -> SqliteArgumentValue<'static> {
-        use SqliteArgumentValue::*;
+impl LibsqlClientArgumentValue<'_> {
+    fn into_static(self) -> LibsqlClientArgumentValue<'static> {
+        use LibsqlClientArgumentValue::*;
 
         match self {
             Null => Null,
@@ -120,7 +120,7 @@ impl SqliteArgumentValue<'_> {
     }
 
     fn bind(&self, handle: &mut StatementHandle, i: usize) -> Result<(), Error> {
-        use SqliteArgumentValue::*;
+        use LibsqlClientArgumentValue::*;
 
         let status = match self {
             Text(v) => handle.bind_text(i, v),

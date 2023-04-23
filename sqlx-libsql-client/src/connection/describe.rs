@@ -1,18 +1,16 @@
-use crate::connection::explain::explain;
 use crate::connection::ConnectionState;
 use crate::describe::Describe;
 use crate::error::Error;
-use crate::statement::VirtualStatement;
 use crate::type_info::DataType;
-use crate::{Sqlite, SqliteColumn};
+use crate::{LibsqlClient, LibsqlClientColumn};
 use sqlx_core::Either;
 use std::convert::identity;
 
-pub(crate) fn describe(conn: &mut ConnectionState, query: &str) -> Result<Describe<Sqlite>, Error> {
+pub(crate) fn describe(conn: &mut ConnectionState, query: &str) -> Result<Describe<LibsqlClient>, Error> {
     // describing a statement from SQLite can be involved
     // each SQLx statement is comprised of multiple SQL statements
 
-    let mut statement = VirtualStatement::new(query, false)?;
+    let mut statement = libsql_client::Statement::new(query);
 
     let mut columns = Vec::new();
     let mut nullable = Vec::new();
@@ -78,7 +76,7 @@ pub(crate) fn describe(conn: &mut ConnectionState, query: &str) -> Result<Descri
 
             nullable.push(exp_nullable.or(col_nullable));
 
-            columns.push(SqliteColumn {
+            columns.push(LibsqlClientColumn {
                 name: name.into(),
                 type_info,
                 ordinal: col,

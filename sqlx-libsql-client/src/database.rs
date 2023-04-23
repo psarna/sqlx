@@ -3,53 +3,53 @@ pub(crate) use sqlx_core::database::{
 };
 
 use crate::{
-    SqliteArgumentValue, SqliteArguments, SqliteColumn, SqliteConnection, SqliteQueryResult,
-    SqliteRow, SqliteStatement, SqliteTransactionManager, SqliteTypeInfo, SqliteValue,
-    SqliteValueRef,
+    LibsqlClientArgumentValue, LibsqlClientArguments, LibsqlClientColumn, LibsqlClientConnection, LibsqlClientQueryResult,
+    LibsqlClientRow, LibsqlClientStatement, LibsqlClientTransactionManager, LibsqlClientTypeInfo, LibsqlClientValue,
+    LibsqlClientValueRef,
 };
 
-/// Sqlite database driver.
+/// LibsqlClient database driver.
 #[derive(Debug)]
-pub struct Sqlite;
+pub struct LibsqlClient;
 
-impl Database for Sqlite {
-    type Connection = SqliteConnection;
+impl Database for LibsqlClient {
+    type Connection = LibsqlClientConnection;
 
-    type TransactionManager = SqliteTransactionManager;
+    type TransactionManager = LibsqlClientTransactionManager;
 
-    type Row = SqliteRow;
+    type Row = LibsqlClientRow;
 
-    type QueryResult = SqliteQueryResult;
+    type QueryResult = LibsqlClientQueryResult;
 
-    type Column = SqliteColumn;
+    type Column = LibsqlClientColumn;
 
-    type TypeInfo = SqliteTypeInfo;
+    type TypeInfo = LibsqlClientTypeInfo;
 
-    type Value = SqliteValue;
+    type Value = LibsqlClientValue;
 
-    const NAME: &'static str = "SQLite";
+    const NAME: &'static str = "libsql-client";
 
-    const URL_SCHEMES: &'static [&'static str] = &["sqlite"];
+    const URL_SCHEMES: &'static [&'static str] = &["libsql"];
 }
 
-impl<'r> HasValueRef<'r> for Sqlite {
-    type Database = Sqlite;
+impl<'r> HasValueRef<'r> for LibsqlClient {
+    type Database = LibsqlClient;
 
-    type ValueRef = SqliteValueRef<'r>;
+    type ValueRef = LibsqlClientValueRef<'r>;
 }
 
-impl<'q> HasArguments<'q> for Sqlite {
-    type Database = Sqlite;
+impl<'q> HasArguments<'q> for LibsqlClient {
+    type Database = LibsqlClient;
 
-    type Arguments = SqliteArguments<'q>;
+    type Arguments = LibsqlClientArguments<'q>;
 
-    type ArgumentBuffer = Vec<SqliteArgumentValue<'q>>;
+    type ArgumentBuffer = Vec<LibsqlClientArgumentValue<'q>>;
 }
 
-impl<'q> HasStatement<'q> for Sqlite {
-    type Database = Sqlite;
+impl<'q> HasStatement<'q> for LibsqlClient {
+    type Database = LibsqlClient;
 
-    type Statement = SqliteStatement<'q>;
+    type Statement = LibsqlClientStatement<'q>;
 }
 
-impl HasStatementCache for Sqlite {}
+// impl HasStatementCache for LibsqlClient {}

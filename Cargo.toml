@@ -59,17 +59,7 @@ migrate = ["sqlx-core/migrate", "sqlx-macros?/migrate", "sqlx-mysql?/migrate", "
 
 # intended mainly for CI and docs
 all-databases = ["mysql", "sqlite", "postgres", "libsql-client", "any"]
-_unstable-all-types = [
-    "bigdecimal",
-    "rust_decimal",
-    "json",
-    "time",
-    "chrono",
-    "ipnetwork",
-    "mac_address",
-    "uuid",
-    "bit-vec",
-]
+_unstable-all-types = ["bigdecimal", "rust_decimal", "json", "time", "chrono", "ipnetwork", "mac_address", "uuid", "bit-vec"]
 
 # Base runtime features without TLS
 runtime-async-std = ["_rt-async-std", "sqlx-core/_rt-async-std", "sqlx-macros/_rt-async-std"]
@@ -99,7 +89,7 @@ any = ["sqlx-core/any", "sqlx-mysql?/any", "sqlx-postgres?/any", "sqlx-sqlite?/a
 postgres = ["sqlx-postgres", "sqlx-macros?/postgres"]
 mysql = ["sqlx-mysql", "sqlx-macros?/mysql"]
 sqlite = ["sqlx-sqlite", "sqlx-macros?/sqlite"]
-libsql-client = ["sqlx-libsql-client", "sqlx-macros?/libsql-client"]
+libsql-client = ["sqlx-libsql-client", "sqlx-macros?/libsql-client", "dep:libsql-client"]
 
 # types
 json = ["sqlx-macros?/json", "sqlx-mysql?/json", "sqlx-postgres?/json", "sqlx-sqlite?/json"]
@@ -161,6 +151,7 @@ sqlx-mysql = { workspace = true, optional = true }
 sqlx-postgres = { workspace = true, optional = true }
 sqlx-sqlite = { workspace = true, optional = true }
 sqlx-libsql-client = { workspace = true, optional = true }
+libsql-client = { version = "0.24.3", default-features = false, features = ["reqwest_backend"], optional = true }
 
 [dev-dependencies]
 anyhow = "1.0.52"
