@@ -41,6 +41,10 @@ pub use sqlx_postgres::{self as postgres, PgConnection, PgExecutor, PgPool, Post
 #[cfg_attr(docsrs, doc(cfg(feature = "sqlite")))]
 pub use sqlx_sqlite::{self as sqlite, Sqlite, SqliteConnection, SqliteExecutor, SqlitePool};
 
+#[cfg(feature = "libsql-client")]
+#[cfg_attr(docsrs, doc(cfg(feature = "libsql-client")))]
+pub use sqlx_libsql_client::{self as libsql_client, LibsqlClient, LibsqlClientConnection, LibsqlClientExecutor, LibsqlClientPool};
+
 #[cfg(feature = "any")]
 #[cfg_attr(docsrs, doc(cfg(feature = "any")))]
 pub use crate::any::{reexports::*, Any, AnyExecutor};
