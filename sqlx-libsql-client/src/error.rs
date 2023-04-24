@@ -37,7 +37,7 @@ impl DatabaseError for LibsqlClientError {
     /// The extended result code.
     #[inline]
     fn code(&self) -> Option<Cow<'_, str>> {
-        Some(self.message.into())
+        Some(Cow::Owned(self.message.to_string()))
     }
 
     #[doc(hidden)]

@@ -34,7 +34,7 @@ impl MigrateDatabase for LibsqlClient {
     }
 
     fn database_exists(url: &str) -> BoxFuture<'_, Result<bool, Error>> {
-        Box::pin(async move {
+        /*Box::pin(async move {
             let options = LibsqlClientConnectOptions::from_str(url)?;
 
             if options.in_memory {
@@ -42,11 +42,12 @@ impl MigrateDatabase for LibsqlClient {
             } else {
                 Ok(options.filename.exists())
             }
-        })
+        })*/
+        todo!()
     }
 
     fn drop_database(url: &str) -> BoxFuture<'_, Result<(), Error>> {
-        Box::pin(async move {
+        /*Box::pin(async move {
             let options = LibsqlClientConnectOptions::from_str(url)?;
 
             if !options.in_memory {
@@ -55,6 +56,8 @@ impl MigrateDatabase for LibsqlClient {
 
             Ok(())
         })
+        */
+        todo!()
     }
 }
 

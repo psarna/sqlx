@@ -17,7 +17,7 @@ impl Type<LibsqlClient> for u8 {
 
 impl<'q> Encode<'q, LibsqlClient> for u8 {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Integer(*self as i64));
+        args.push(libsql_client::Value::Integer{ value: *self as i64 });
 
         IsNull::No
     }
@@ -25,7 +25,8 @@ impl<'q> Encode<'q, LibsqlClient> for u8 {
 
 impl<'r> Decode<'r, LibsqlClient> for u8 {
     fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
-        Ok(value.int().try_into()?)
+        //Ok(value.int().try_into()?)
+        todo!()
     }
 }
 
@@ -49,7 +50,8 @@ impl<'q> Encode<'q, LibsqlClient> for u16 {
 
 impl<'r> Decode<'r, LibsqlClient> for u16 {
     fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
-        Ok(value.int().try_into()?)
+        //Ok(value.int().try_into()?)
+        todo!()
     }
 }
 

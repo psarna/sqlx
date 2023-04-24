@@ -22,10 +22,10 @@ pub struct LibsqlClientArguments {
     pub(crate) values: Vec<libsql_client::Value>,
 }
 
-impl LibsqlClientArguments {
+impl<'q> LibsqlClientArguments {
     pub(crate) fn add<T>(&mut self, value: T)
     where
-        T: Encode<'static, LibsqlClient>,
+        T: Encode<'q, LibsqlClient>,
     {
         if let IsNull::Yes = value.encode(&mut self.values) {
             self.values.push(libsql_client::Value::Null);

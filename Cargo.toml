@@ -20,7 +20,8 @@ members = [
 #    "examples/postgres/todos",
 #    "examples/postgres/mockable-todos",
 #    "examples/postgres/transaction",
-    "examples/sqlite/todos",
+#    "examples/sqlite/todos",
+    "examples/libsql-client/todos",
 ]
 
 [workspace.package]

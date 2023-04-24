@@ -23,7 +23,8 @@ impl<'q> Encode<'q, LibsqlClient> for &'q str {
 
 impl<'r> Decode<'r, LibsqlClient> for &'r str {
     fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
-        value.text()
+        //value.text()
+        todo!()
     }
 }
 

@@ -81,7 +81,7 @@ impl AnyConnectionBackend for LibsqlClientConnection {
         let persistent = arguments.is_some();
         let args = arguments.map(map_arguments);
 
-        Box::pin(
+        /*Box::pin(
             self.worker
                 .execute(query, args, self.row_channel_size, persistent)
                 .map_ok(flume::Receiver::into_stream)
@@ -94,7 +94,8 @@ impl AnyConnectionBackend for LibsqlClientConnection {
                         Either::Right(row) => Ok(Either::Right(AnyRow::try_from(&row)?)),
                     },
                 ),
-        )
+        )*/
+        todo!()
     }
 
     fn fetch_optional<'q>(
@@ -105,7 +106,7 @@ impl AnyConnectionBackend for LibsqlClientConnection {
         let persistent = arguments.is_some();
         let args = arguments.map(map_arguments);
 
-        Box::pin(async move {
+        /*Box::pin(async move {
             let stream = self
                 .worker
                 .execute(query, args, self.row_channel_size, persistent)
@@ -118,7 +119,8 @@ impl AnyConnectionBackend for LibsqlClientConnection {
             }
 
             Ok(None)
-        })
+        })*/
+        todo!()
     }
 
     fn prepare_with<'c, 'q: 'c>(
@@ -175,7 +177,7 @@ impl<'a> TryFrom<&'a LibsqlClientColumn> for AnyColumn {
 
         Ok(AnyColumn {
             ordinal: col.ordinal,
-            name: col.name.clone(),
+            name: col.name.clone().into(),
             type_info,
         })
     }
@@ -194,7 +196,7 @@ impl<'a> TryFrom<&'a AnyConnectOptions> for LibsqlClientConnectOptions {
 
     fn try_from(opts: &'a AnyConnectOptions) -> Result<Self, Self::Error> {
         let mut opts_out = LibsqlClientConnectOptions::from_url(&opts.database_url)?;
-        opts_out.log_settings = opts.log_settings.clone();
+        //opts_out.log_settings = opts.log_settings.clone();
         Ok(opts_out)
     }
 }
@@ -208,13 +210,13 @@ fn map_arguments(args: AnyArguments<'_>) -> LibsqlClientArguments {
             .into_iter()
             .map(|val| match val {
                 AnyValueKind::Null => libsql_client::Value::Null,
-                AnyValueKind::SmallInt(i) => libsql_client::Value::Integer(i as i64),
-                AnyValueKind::Integer(i) => libsql_client::Value::Integer(i as i64),
-                AnyValueKind::BigInt(i) => libsql_client::Value::Integer(i),
-                AnyValueKind::Real(r) => libsql_client::Value::Float(r as f64),
-                AnyValueKind::Double(d) => libsql_client::Value::Float(d),
-                AnyValueKind::Text(t) => libsql_client::Value::Text(t.to_string()),
-                AnyValueKind::Blob(b) => libsql_client::Value::Blob(b.to_vec()),
+                AnyValueKind::SmallInt(i) => libsql_client::Value::Integer{ value: i as i64},
+                AnyValueKind::Integer(i) => libsql_client::Value::Integer{ value: i as i64},
+                AnyValueKind::BigInt(i) => libsql_client::Value::Integer{ value: i },
+                AnyValueKind::Real(r) => libsql_client::Value::Float{ value: r as f64},
+                AnyValueKind::Double(d) => libsql_client::Value::Float{ value: d},
+                AnyValueKind::Text(t) => libsql_client::Value::Text{ value: t.to_string() },
+                AnyValueKind::Blob(b) => libsql_client::Value::Blob{ value: b.to_vec() },
                 // AnyValueKind is `#[non_exhaustive]` but we should have covered everything
                 _ => unreachable!("BUG: missing mapping for {:?}", val),
             })
