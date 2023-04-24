@@ -42,7 +42,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn add_todo(pool: &SqlitePool, description: String) -> anyhow::Result<i64> {
+async fn add_todo(pool: &LibsqlClientPool, description: String) -> anyhow::Result<i64> {
     let mut conn = pool.acquire().await?;
 
     // Insert the task, then obtain the ID of this row
@@ -60,7 +60,7 @@ VALUES ( ?1 )
     Ok(id)
 }
 
-async fn complete_todo(pool: &SqlitePool, id: i64) -> anyhow::Result<bool> {
+async fn complete_todo(pool: &LibsqlClientPool, id: i64) -> anyhow::Result<bool> {
     let rows_affected = sqlx::query!(
         r#"
 UPDATE todos
@@ -76,7 +76,7 @@ WHERE id = ?1
     Ok(rows_affected > 0)
 }
 
-async fn list_todos(pool: &SqlitePool) -> anyhow::Result<()> {
+async fn list_todos(pool: &LibsqlClientPool) -> anyhow::Result<()> {
     let recs = sqlx::query!(
         r#"
 SELECT id, description, done
