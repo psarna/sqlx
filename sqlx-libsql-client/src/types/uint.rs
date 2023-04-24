@@ -3,76 +3,77 @@ use crate::encode::{Encode, IsNull};
 use crate::error::BoxDynError;
 use crate::type_info::DataType;
 use crate::types::Type;
-use crate::{Sqlite, SqliteArgumentValue, SqliteTypeInfo, SqliteValueRef};
+use crate::{LibsqlClient, LibsqlClientTypeInfo, LibsqlClientValueRef};
 
-impl Type<Sqlite> for u8 {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Int)
+impl Type<LibsqlClient> for u8 {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Int)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Int | DataType::Int64)
     }
 }
 
-impl<'q> Encode<'q, Sqlite> for u8 {
-    fn encode_by_ref(&self, args: &mut Vec<SqliteArgumentValue<'q>>) -> IsNull {
-        args.push(SqliteArgumentValue::Int(*self as i32));
+impl<'q> Encode<'q, LibsqlClient> for u8 {
+    fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
+        args.push(libsql_client::Value::Integer(*self as i64));
 
         IsNull::No
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for u8 {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for u8 {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(value.int().try_into()?)
     }
 }
 
-impl Type<Sqlite> for u16 {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Int)
+impl Type<LibsqlClient> for u16 {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Int)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Int | DataType::Int64)
     }
 }
 
-impl<'q> Encode<'q, Sqlite> for u16 {
-    fn encode_by_ref(&self, args: &mut Vec<SqliteArgumentValue<'q>>) -> IsNull {
-        args.push(SqliteArgumentValue::Int(*self as i32));
+impl<'q> Encode<'q, LibsqlClient> for u16 {
+    fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
+        args.push(libsql_client::Value::Integer{ value: *self as i64 });
 
         IsNull::No
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for u16 {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for u16 {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(value.int().try_into()?)
     }
 }
 
-impl Type<Sqlite> for u32 {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Int64)
+impl Type<LibsqlClient> for u32 {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Int64)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Int | DataType::Int64)
     }
 }
 
-impl<'q> Encode<'q, Sqlite> for u32 {
-    fn encode_by_ref(&self, args: &mut Vec<SqliteArgumentValue<'q>>) -> IsNull {
-        args.push(SqliteArgumentValue::Int64(*self as i64));
+impl<'q> Encode<'q, LibsqlClient> for u32 {
+    fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
+        args.push(libsql_client::Value::Integer{ value: *self as i64 });
 
         IsNull::No
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for u32 {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
-        Ok(value.int64().try_into()?)
+impl<'r> Decode<'r, LibsqlClient> for u32 {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+        //Ok(value.int64().try_into()?)
+        todo!()
     }
 }

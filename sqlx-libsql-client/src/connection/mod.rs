@@ -10,7 +10,6 @@ use crate::{LibsqlClient, LibsqlClientConnectOptions};
 
 pub(crate) use sqlx_core::connection::*;
 
-pub(crate) mod describe;
 mod executor;
 
 /// A connection to an open [LibsqlClient] database.
@@ -31,21 +30,6 @@ pub struct LibsqlClientConnection {
 pub(crate) struct Handler(NonNull<dyn FnMut() -> bool + Send + 'static>);
 unsafe impl Send for Handler {}
 
-pub(crate) struct ConnectionState {
-    pub(crate) handle: ConnectionHandle,
-
-    // transaction status
-    pub(crate) transaction_depth: usize,
-
-    pub(crate) statements: Statements,
-
-    log_settings: LogSettings,
-
-    /// Stores the progress handler set on the current connection. If the handler returns `false`,
-    /// the query is interrupted.
-    progress_handler_callback: Option<Handler>,
-}
-
 pub(crate) struct Statements {
     // cache of semi-persistent statements
     cached: StatementCache<libsql_client::Statement>,
@@ -57,7 +41,9 @@ impl LibsqlClientConnection {
             client: libsql_client::new_client_from_config(libsql_client::Config {
                 url: options.url.clone(),
                 auth_token: options.auth_token.clone(),
-            }).await?
+            })
+            .await
+            .map_err(|e| Error::Protocol(e.to_string()))?,
         })
     }
 }
@@ -65,8 +51,7 @@ impl LibsqlClientConnection {
 impl Debug for LibsqlClientConnection {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         // TODO: implement this
-        f.debug_struct("LibsqlClientConnection")
-            .finish()
+        f.debug_struct("LibsqlClientConnection").finish()
     }
 }
 
@@ -121,13 +106,6 @@ impl Connection for LibsqlClientConnection {
     }
 }
 
-impl Drop for ConnectionState {
-    fn drop(&mut self) {
-        // explicitly drop statements before the connection handle is dropped
-        self.statements.clear();
-    }
-}
-
 impl Statements {
     fn new(capacity: usize) -> Self {
         Statements {
@@ -135,7 +113,11 @@ impl Statements {
         }
     }
 
-    fn get(&mut self, query: &str, persistent: bool) -> Result<&mut libsql_client::Statement, Error> {
+    fn get(
+        &mut self,
+        query: &str,
+        persistent: bool,
+    ) -> Result<&mut libsql_client::Statement, Error> {
         let exists = self.cached.contains_key(query);
 
         if !exists {
@@ -144,11 +126,6 @@ impl Statements {
         }
 
         let statement = self.cached.get_mut(query).unwrap();
-
-        if exists {
-            // as this statement has been executed before, we reset before continuing
-            statement.reset()?;
-        }
 
         Ok(statement)
     }
@@ -159,6 +136,5 @@ impl Statements {
 
     fn clear(&mut self) {
         self.cached.clear();
-        self.temp = None;
     }
 }

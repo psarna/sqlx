@@ -3,18 +3,18 @@
 #[macro_use]
 extern crate sqlx_core;
 
-pub use arguments::{LibsqlClientArguments};
+pub use arguments::LibsqlClientArguments;
 pub use column::LibsqlClientColumn;
-pub use connection::{LibsqlClientConnection};
+pub use connection::LibsqlClientConnection;
 pub use database::LibsqlClient;
 pub use error::LibsqlClientError;
+pub use options::LibsqlClientConnectOptions;
 pub use query_result::LibsqlClientQueryResult;
 pub use row::LibsqlClientRow;
 pub use statement::LibsqlClientStatement;
 pub use transaction::LibsqlClientTransactionManager;
 pub use type_info::LibsqlClientTypeInfo;
 pub use value::{LibsqlClientValue, LibsqlClientValueRef};
-pub use options::LibsqlClientConnectOptions;
 
 pub(crate) use sqlx_core::driver_prelude::*;
 
@@ -38,14 +38,8 @@ mod value;
 #[cfg(feature = "any")]
 pub mod any;
 
-#[cfg(feature = "regexp")]
-mod regexp;
-
 #[cfg(feature = "migrate")]
 mod migrate;
-
-#[cfg(feature = "migrate")]
-mod testing;
 
 /// An alias for [`Pool`][crate::pool::Pool], specialized for libSQL client.
 pub type LibsqlClientPool = crate::pool::Pool<LibsqlClient>;

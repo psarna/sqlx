@@ -3,53 +3,51 @@ use crate::encode::{Encode, IsNull};
 use crate::error::BoxDynError;
 use crate::type_info::DataType;
 use crate::types::Type;
-use crate::{Sqlite, SqliteArgumentValue, SqliteTypeInfo, SqliteValueRef};
+use crate::{LibsqlClient, LibsqlClientTypeInfo, LibsqlClientValueRef};
 use std::borrow::Cow;
 use uuid::{fmt::Hyphenated, Uuid};
 
-impl Type<Sqlite> for Uuid {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Blob)
+impl Type<LibsqlClient> for Uuid {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Blob)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Blob | DataType::Text)
     }
 }
 
-impl<'q> Encode<'q, Sqlite> for Uuid {
-    fn encode_by_ref(&self, args: &mut Vec<SqliteArgumentValue<'q>>) -> IsNull {
-        args.push(SqliteArgumentValue::Blob(Cow::Owned(
-            self.as_bytes().to_vec(),
-        )));
+impl<'q> Encode<'q, LibsqlClient> for Uuid {
+    fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
+        args.push(libsql_client::Value::Blob(self.as_bytes().to_vec()));
 
         IsNull::No
     }
 }
 
-impl Decode<'_, Sqlite> for Uuid {
-    fn decode(value: SqliteValueRef<'_>) -> Result<Self, BoxDynError> {
+impl Decode<'_, LibsqlClient> for Uuid {
+    fn decode(value: LibsqlClientValueRef<'_>) -> Result<Self, BoxDynError> {
         // construct a Uuid from the returned bytes
         Uuid::from_slice(value.blob()).map_err(Into::into)
     }
 }
 
-impl Type<Sqlite> for Hyphenated {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Text)
+impl Type<LibsqlClient> for Hyphenated {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Text)
     }
 }
 
-impl<'q> Encode<'q, Sqlite> for Hyphenated {
-    fn encode_by_ref(&self, args: &mut Vec<SqliteArgumentValue<'q>>) -> IsNull {
-        args.push(SqliteArgumentValue::Text(Cow::Owned(self.to_string())));
+impl<'q> Encode<'q, LibsqlClient> for Hyphenated {
+    fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
+        args.push(libsql_client::Value::Text(self.to_string()));
 
         IsNull::No
     }
 }
 
-impl Decode<'_, Sqlite> for Hyphenated {
-    fn decode(value: SqliteValueRef<'_>) -> Result<Self, BoxDynError> {
+impl Decode<'_, LibsqlClient> for Hyphenated {
+    fn decode(value: LibsqlClientValueRef<'_>) -> Result<Self, BoxDynError> {
         let uuid: Result<Uuid, BoxDynError> =
             Uuid::parse_str(&value.text().map(ToOwned::to_owned)?).map_err(Into::into);
 

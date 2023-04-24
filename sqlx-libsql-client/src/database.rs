@@ -1,11 +1,9 @@
-pub(crate) use sqlx_core::database::{
-    Database, HasArguments, HasStatement, HasValueRef,
-};
+pub(crate) use sqlx_core::database::{Database, HasArguments, HasStatement, HasValueRef};
 
 use crate::{
     LibsqlClientArguments, LibsqlClientColumn, LibsqlClientConnection, LibsqlClientQueryResult,
-    LibsqlClientRow, LibsqlClientStatement, LibsqlClientTransactionManager, LibsqlClientTypeInfo, LibsqlClientValue,
-    LibsqlClientValueRef,
+    LibsqlClientRow, LibsqlClientStatement, LibsqlClientTransactionManager, LibsqlClientTypeInfo,
+    LibsqlClientValue, LibsqlClientValueRef,
 };
 
 /// LibsqlClient database driver.

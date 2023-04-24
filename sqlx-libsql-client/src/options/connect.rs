@@ -21,44 +21,17 @@ impl ConnectOptions for LibsqlClientConnectOptions {
     {
         Box::pin(async move {
             let mut conn = LibsqlClientConnection::establish(self).await?;
-
-            // Execute PRAGMAs
-            conn.execute(&*self.pragma_string()).await?;
-
-            if !self.collations.is_empty() {
-                let mut locked = conn.lock_handle().await?;
-
-                for collation in &self.collations {
-                    collation.create(&mut locked.guard.handle)?;
-                }
-            }
-
             Ok(conn)
         })
     }
 
     fn log_statements(mut self, level: LevelFilter) -> Self {
-        self.log_settings.log_statements(level);
+        //self.log_settings.log_statements(level);
         self
     }
 
     fn log_slow_statements(mut self, level: LevelFilter, duration: Duration) -> Self {
-        self.log_settings.log_slow_statements(level, duration);
+        //self.log_settings.log_slow_statements(level, duration);
         self
-    }
-}
-
-impl LibsqlClientConnectOptions {
-    /// Collect all `PRAMGA` commands into a single string
-    pub(crate) fn pragma_string(&self) -> String {
-        let mut string = String::new();
-
-        for (key, opt_value) in &self.pragmas {
-            if let Some(value) = opt_value {
-                write!(string, "PRAGMA {} = {}; ", key, value).ok();
-            }
-        }
-
-        string
     }
 }

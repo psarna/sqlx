@@ -7,8 +7,8 @@ use std::borrow::Cow;
 
 pub(crate) use sqlx_core::arguments::*;
 
-#[derive(Debug, Clone)]
-/*pub enum LibsqlClientArgumentValue<'q> {
+/*#[derive(Debug, Clone)]
+pub enum LibsqlClientArgumentValue<'q> {
     Null,
     Text(Cow<'q, str>),
     Blob(Cow<'q, [u8]>),
@@ -33,7 +33,7 @@ impl LibsqlClientArguments {
     }
 }
 
-impl<'q> Arguments<'_> for LibsqlClientArguments {
+impl<'q> Arguments<'q> for LibsqlClientArguments {
     type Database = LibsqlClient;
 
     fn reserve(&mut self, len: usize, _size_hint: usize) {

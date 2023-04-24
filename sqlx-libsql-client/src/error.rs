@@ -16,9 +16,7 @@ pub struct LibsqlClientError {
 
 impl LibsqlClientError {
     pub(crate) fn new(message: String) -> Self {
-        Self {
-            message
-        }
+        Self { message }
     }
 }
 
@@ -39,7 +37,7 @@ impl DatabaseError for LibsqlClientError {
     /// The extended result code.
     #[inline]
     fn code(&self) -> Option<Cow<'_, str>> {
-        Some(format!("{}", self.code).into())
+        Some(self.message.into())
     }
 
     #[doc(hidden)]

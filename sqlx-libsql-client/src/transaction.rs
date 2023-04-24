@@ -12,17 +12,17 @@ impl TransactionManager for LibsqlClientTransactionManager {
 
     fn begin(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement this
-        Box::pin(futures_core::future::ok(()))
+        Box::pin(futures_util::future::ok(()))
     }
 
     fn commit(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement this
-        Box::pin(futures_core::future::ok(()))
+        Box::pin(futures_util::future::ok(()))
     }
 
     fn rollback(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement this
-        Box::pin(futures_core::future::ok(()))
+        Box::pin(futures_util::future::ok(()))
     }
 
     fn start_rollback(conn: &mut LibsqlClientConnection) {

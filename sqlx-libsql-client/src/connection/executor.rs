@@ -1,5 +1,6 @@
 use crate::{
-    LibsqlClient, LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow, LibsqlClientStatement, LibsqlClientTypeInfo,
+    LibsqlClient, LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow,
+    LibsqlClientStatement, LibsqlClientTypeInfo,
 };
 use futures_core::future::BoxFuture;
 use futures_core::stream::BoxStream;
@@ -85,7 +86,10 @@ impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
     }
 
     #[doc(hidden)]
-    fn describe<'e, 'q: 'e>(self, sql: &'q str) -> BoxFuture<'e, Result<Describe<LibsqlClient>, Error>>
+    fn describe<'e, 'q: 'e>(
+        self,
+        sql: &'q str,
+    ) -> BoxFuture<'e, Result<Describe<LibsqlClient>, Error>>
     where
         'c: 'e,
     {

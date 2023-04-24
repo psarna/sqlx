@@ -1,6 +1,7 @@
 use crate::{
-    Either, Sqlite, SqliteArgumentValue, SqliteArguments, SqliteColumn, SqliteConnectOptions,
-    SqliteConnection, SqliteQueryResult, SqliteRow, SqliteTransactionManager, SqliteTypeInfo,
+    Either, LibsqlClient, LibsqlClientArguments, LibsqlClientColumn, LibsqlClientConnectOptions,
+    LibsqlClientConnection, LibsqlClientQueryResult, LibsqlClientRow,
+    LibsqlClientTransactionManager, LibsqlClientTypeInfo,
 };
 use futures_core::future::BoxFuture;
 use futures_core::stream::BoxStream;
@@ -18,11 +19,11 @@ use sqlx_core::describe::Describe;
 use sqlx_core::executor::Executor;
 use sqlx_core::transaction::TransactionManager;
 
-sqlx_core::declare_driver_with_optional_migrate!(DRIVER = Sqlite);
+sqlx_core::declare_driver_with_optional_migrate!(DRIVER = LibsqlClient);
 
-impl AnyConnectionBackend for SqliteConnection {
+impl AnyConnectionBackend for LibsqlClientConnection {
     fn name(&self) -> &str {
-        <Sqlite as Database>::NAME
+        <LibsqlClient as Database>::NAME
     }
 
     fn close(self: Box<Self>) -> BoxFuture<'static, sqlx_core::Result<()>> {
@@ -38,19 +39,19 @@ impl AnyConnectionBackend for SqliteConnection {
     }
 
     fn begin(&mut self) -> BoxFuture<'_, sqlx_core::Result<()>> {
-        SqliteTransactionManager::begin(self)
+        LibsqlClientTransactionManager::begin(self)
     }
 
     fn commit(&mut self) -> BoxFuture<'_, sqlx_core::Result<()>> {
-        SqliteTransactionManager::commit(self)
+        LibsqlClientTransactionManager::commit(self)
     }
 
     fn rollback(&mut self) -> BoxFuture<'_, sqlx_core::Result<()>> {
-        SqliteTransactionManager::rollback(self)
+        LibsqlClientTransactionManager::rollback(self)
     }
 
     fn start_rollback(&mut self) {
-        SqliteTransactionManager::start_rollback(self)
+        LibsqlClientTransactionManager::start_rollback(self)
     }
 
     fn shrink_buffers(&mut self) {
@@ -86,7 +87,9 @@ impl AnyConnectionBackend for SqliteConnection {
                 .map_ok(flume::Receiver::into_stream)
                 .try_flatten_stream()
                 .map(
-                    move |res: sqlx_core::Result<Either<SqliteQueryResult, SqliteRow>>| match res? {
+                    move |res: sqlx_core::Result<
+                        Either<LibsqlClientQueryResult, LibsqlClientRow>,
+                    >| match res? {
                         Either::Left(result) => Ok(Either::Left(map_result(result))),
                         Either::Right(row) => Ok(Either::Right(AnyRow::try_from(&row)?)),
                     },
@@ -134,12 +137,12 @@ impl AnyConnectionBackend for SqliteConnection {
     }
 }
 
-impl<'a> TryFrom<&'a SqliteTypeInfo> for AnyTypeInfo {
+impl<'a> TryFrom<&'a LibsqlClientTypeInfo> for AnyTypeInfo {
     type Error = sqlx_core::Error;
 
-    fn try_from(sqlite_type: &'a SqliteTypeInfo) -> Result<Self, Self::Error> {
+    fn try_from(libsql_type: &'a LibsqlClientTypeInfo) -> Result<Self, Self::Error> {
         Ok(AnyTypeInfo {
-            kind: match &sqlite_type.0 {
+            kind: match &libsql_type.0 {
                 DataType::Null => AnyTypeInfoKind::Null,
                 DataType::Int => AnyTypeInfoKind::Integer,
                 DataType::Int64 => AnyTypeInfoKind::BigInt,
@@ -149,8 +152,8 @@ impl<'a> TryFrom<&'a SqliteTypeInfo> for AnyTypeInfo {
                 _ => {
                     return Err(sqlx_core::Error::AnyDriverError(
                         format!(
-                            "Any driver does not support the SQLite type {:?}",
-                            sqlite_type
+                            "Any driver does not support the libSQL type {:?}",
+                            libsql_type
                         )
                         .into(),
                     ))
@@ -160,10 +163,10 @@ impl<'a> TryFrom<&'a SqliteTypeInfo> for AnyTypeInfo {
     }
 }
 
-impl<'a> TryFrom<&'a SqliteColumn> for AnyColumn {
+impl<'a> TryFrom<&'a LibsqlClientColumn> for AnyColumn {
     type Error = sqlx_core::Error;
 
-    fn try_from(col: &'a SqliteColumn) -> Result<Self, Self::Error> {
+    fn try_from(col: &'a LibsqlClientColumn) -> Result<Self, Self::Error> {
         let type_info =
             AnyTypeInfo::try_from(&col.type_info).map_err(|e| sqlx_core::Error::ColumnDecode {
                 index: col.name.to_string(),
@@ -178,40 +181,40 @@ impl<'a> TryFrom<&'a SqliteColumn> for AnyColumn {
     }
 }
 
-impl<'a> TryFrom<&'a SqliteRow> for AnyRow {
+impl<'a> TryFrom<&'a LibsqlClientRow> for AnyRow {
     type Error = sqlx_core::Error;
 
-    fn try_from(row: &'a SqliteRow) -> Result<Self, Self::Error> {
+    fn try_from(row: &'a LibsqlClientRow) -> Result<Self, Self::Error> {
         AnyRow::map_from(row, row.column_names.clone())
     }
 }
 
-impl<'a> TryFrom<&'a AnyConnectOptions> for SqliteConnectOptions {
+impl<'a> TryFrom<&'a AnyConnectOptions> for LibsqlClientConnectOptions {
     type Error = sqlx_core::Error;
 
     fn try_from(opts: &'a AnyConnectOptions) -> Result<Self, Self::Error> {
-        let mut opts_out = SqliteConnectOptions::from_url(&opts.database_url)?;
+        let mut opts_out = LibsqlClientConnectOptions::from_url(&opts.database_url)?;
         opts_out.log_settings = opts.log_settings.clone();
         Ok(opts_out)
     }
 }
 
 /// Instead of `AnyArguments::convert_into()`, we can do a direct mapping and preserve the lifetime.
-fn map_arguments(args: AnyArguments<'_>) -> SqliteArguments<'_> {
-    SqliteArguments {
+fn map_arguments(args: AnyArguments<'_>) -> LibsqlClientArguments {
+    LibsqlClientArguments {
         values: args
             .values
             .0
             .into_iter()
             .map(|val| match val {
-                AnyValueKind::Null => SqliteArgumentValue::Null,
-                AnyValueKind::SmallInt(i) => SqliteArgumentValue::Int(i as i32),
-                AnyValueKind::Integer(i) => SqliteArgumentValue::Int(i),
-                AnyValueKind::BigInt(i) => SqliteArgumentValue::Int64(i),
-                AnyValueKind::Real(r) => SqliteArgumentValue::Double(r as f64),
-                AnyValueKind::Double(d) => SqliteArgumentValue::Double(d),
-                AnyValueKind::Text(t) => SqliteArgumentValue::Text(t),
-                AnyValueKind::Blob(b) => SqliteArgumentValue::Blob(b),
+                AnyValueKind::Null => libsql_client::Value::Null,
+                AnyValueKind::SmallInt(i) => libsql_client::Value::Integer(i as i64),
+                AnyValueKind::Integer(i) => libsql_client::Value::Integer(i as i64),
+                AnyValueKind::BigInt(i) => libsql_client::Value::Integer(i),
+                AnyValueKind::Real(r) => libsql_client::Value::Float(r as f64),
+                AnyValueKind::Double(d) => libsql_client::Value::Float(d),
+                AnyValueKind::Text(t) => libsql_client::Value::Text(t.to_string()),
+                AnyValueKind::Blob(b) => libsql_client::Value::Blob(b.to_vec()),
                 // AnyValueKind is `#[non_exhaustive]` but we should have covered everything
                 _ => unreachable!("BUG: missing mapping for {:?}", val),
             })
@@ -219,7 +222,7 @@ fn map_arguments(args: AnyArguments<'_>) -> SqliteArguments<'_> {
     }
 }
 
-fn map_result(res: SqliteQueryResult) -> AnyQueryResult {
+fn map_result(res: LibsqlClientQueryResult) -> AnyQueryResult {
     AnyQueryResult {
         rows_affected: res.rows_affected(),
         last_insert_id: None,

@@ -5,7 +5,7 @@ use std::str::FromStr;
 impl LibsqlClientConnectOptions {
     pub(crate) fn from_url_and_token(url: &str, params: Option<&str>) -> Result<Self, Error> {
         let options = Self {
-            url: url::Url::parse(url)?,
+            url: url::Url::parse(url).map_err(|e| Error::Protocol(e.to_string()))?,
             auth_token: params.and_then(|params| {
                 params
                     .split('&')

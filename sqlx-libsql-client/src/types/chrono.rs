@@ -5,7 +5,7 @@ use crate::{
     error::BoxDynError,
     type_info::DataType,
     types::Type,
-    Sqlite, SqliteArgumentValue, SqliteTypeInfo, SqliteValueRef,
+    LibsqlClient, LibsqlClientTypeInfo, LibsqlClientValueRef,
 };
 use bitflags::_core::fmt::Display;
 use chrono::FixedOffset;
@@ -13,22 +13,22 @@ use chrono::{
     DateTime, Local, NaiveDate, NaiveDateTime, NaiveTime, Offset, SecondsFormat, TimeZone, Utc,
 };
 
-impl<Tz: TimeZone> Type<Sqlite> for DateTime<Tz> {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Datetime)
+impl<Tz: TimeZone> Type<LibsqlClient> for DateTime<Tz> {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Datetime)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
-        <NaiveDateTime as Type<Sqlite>>::compatible(ty)
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
+        <NaiveDateTime as Type<LibsqlClient>>::compatible(ty)
     }
 }
 
-impl Type<Sqlite> for NaiveDateTime {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Datetime)
+impl Type<LibsqlClient> for NaiveDateTime {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Datetime)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(
             ty.0,
             DataType::Datetime | DataType::Text | DataType::Int64 | DataType::Int | DataType::Float
@@ -36,72 +36,72 @@ impl Type<Sqlite> for NaiveDateTime {
     }
 }
 
-impl Type<Sqlite> for NaiveDate {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Date)
+impl Type<LibsqlClient> for NaiveDate {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Date)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Date | DataType::Text)
     }
 }
 
-impl Type<Sqlite> for NaiveTime {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Time)
+impl Type<LibsqlClient> for NaiveTime {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Time)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Time | DataType::Text)
     }
 }
 
-impl<Tz: TimeZone> Encode<'_, Sqlite> for DateTime<Tz>
+impl<Tz: TimeZone> Encode<'_, LibsqlClient> for DateTime<Tz>
 where
     Tz::Offset: Display,
 {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
-        Encode::<Sqlite>::encode(self.to_rfc3339_opts(SecondsFormat::AutoSi, false), buf)
+    fn encode_by_ref(&self, buf: &mut Vec<LibsqlClientArgumentValue<'_>>) -> IsNull {
+        Encode::<LibsqlClient>::encode(self.to_rfc3339_opts(SecondsFormat::AutoSi, false), buf)
     }
 }
 
-impl Encode<'_, Sqlite> for NaiveDateTime {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
-        Encode::<Sqlite>::encode(self.format("%F %T%.f").to_string(), buf)
+impl Encode<'_, LibsqlClient> for NaiveDateTime {
+    fn encode_by_ref(&self, buf: &mut Vec<LibsqlClientArgumentValue<'_>>) -> IsNull {
+        Encode::<LibsqlClient>::encode(self.format("%F %T%.f").to_string(), buf)
     }
 }
 
-impl Encode<'_, Sqlite> for NaiveDate {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
-        Encode::<Sqlite>::encode(self.format("%F").to_string(), buf)
+impl Encode<'_, LibsqlClient> for NaiveDate {
+    fn encode_by_ref(&self, buf: &mut Vec<LibsqlClientArgumentValue<'_>>) -> IsNull {
+        Encode::<LibsqlClient>::encode(self.format("%F").to_string(), buf)
     }
 }
 
-impl Encode<'_, Sqlite> for NaiveTime {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
-        Encode::<Sqlite>::encode(self.format("%T%.f").to_string(), buf)
+impl Encode<'_, LibsqlClient> for NaiveTime {
+    fn encode_by_ref(&self, buf: &mut Vec<LibsqlClientArgumentValue<'_>>) -> IsNull {
+        Encode::<LibsqlClient>::encode(self.format("%T%.f").to_string(), buf)
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for DateTime<Utc> {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for DateTime<Utc> {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(Utc.from_utc_datetime(&decode_datetime(value)?.naive_utc()))
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for DateTime<Local> {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for DateTime<Local> {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(Local.from_utc_datetime(&decode_datetime(value)?.naive_utc()))
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for DateTime<FixedOffset> {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for DateTime<FixedOffset> {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         decode_datetime(value)
     }
 }
 
-fn decode_datetime(value: SqliteValueRef<'_>) -> Result<DateTime<FixedOffset>, BoxDynError> {
+fn decode_datetime(value: LibsqlClientValueRef<'_>) -> Result<DateTime<FixedOffset>, BoxDynError> {
     let dt = match value.type_info().0 {
         DataType::Text => decode_datetime_from_text(value.text()?),
         DataType::Int | DataType::Int64 => decode_datetime_from_int(value.int64()),
@@ -168,20 +168,20 @@ fn decode_datetime_from_float(value: f64) -> Option<DateTime<FixedOffset>> {
     NaiveDateTime::from_timestamp_opt(seconds, nanos).map(|dt| Utc.fix().from_utc_datetime(&dt))
 }
 
-impl<'r> Decode<'r, Sqlite> for NaiveDateTime {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for NaiveDateTime {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(decode_datetime(value)?.naive_local())
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for NaiveDate {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for NaiveDate {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(NaiveDate::parse_from_str(value.text()?, "%F")?)
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for NaiveTime {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for NaiveTime {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         let value = value.text()?;
 
         // Loop over common time patterns, inspired by Diesel

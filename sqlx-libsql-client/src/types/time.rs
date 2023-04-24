@@ -5,28 +5,28 @@ use crate::{
     error::BoxDynError,
     type_info::DataType,
     types::Type,
-    Sqlite, SqliteArgumentValue, SqliteTypeInfo, SqliteValueRef,
+    LibsqlClient, LibsqlClientTypeInfo, LibsqlClientValueRef,
 };
 use time::format_description::{well_known::Rfc3339, FormatItem};
 use time::macros::format_description as fd;
 use time::{Date, OffsetDateTime, PrimitiveDateTime, Time};
 
-impl Type<Sqlite> for OffsetDateTime {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Datetime)
+impl Type<LibsqlClient> for OffsetDateTime {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Datetime)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
-        <PrimitiveDateTime as Type<Sqlite>>::compatible(ty)
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
+        <PrimitiveDateTime as Type<LibsqlClient>>::compatible(ty)
     }
 }
 
-impl Type<Sqlite> for PrimitiveDateTime {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Datetime)
+impl Type<LibsqlClient> for PrimitiveDateTime {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Datetime)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(
             ty.0,
             DataType::Datetime | DataType::Text | DataType::Int64 | DataType::Int
@@ -34,73 +34,73 @@ impl Type<Sqlite> for PrimitiveDateTime {
     }
 }
 
-impl Type<Sqlite> for Date {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Date)
+impl Type<LibsqlClient> for Date {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Date)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Date | DataType::Text)
     }
 }
 
-impl Type<Sqlite> for Time {
-    fn type_info() -> SqliteTypeInfo {
-        SqliteTypeInfo(DataType::Time)
+impl Type<LibsqlClient> for Time {
+    fn type_info() -> LibsqlClientTypeInfo {
+        LibsqlClientTypeInfo(DataType::Time)
     }
 
-    fn compatible(ty: &SqliteTypeInfo) -> bool {
+    fn compatible(ty: &LibsqlClientTypeInfo) -> bool {
         matches!(ty.0, DataType::Time | DataType::Text)
     }
 }
 
-impl Encode<'_, Sqlite> for OffsetDateTime {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
-        Encode::<Sqlite>::encode(self.format(&Rfc3339).unwrap(), buf)
+impl Encode<'_, LibsqlClient> for OffsetDateTime {
+    fn encode_by_ref(&self, buf: &mut Vec<libsql_client::Value>) -> IsNull {
+        Encode::<LibsqlClient>::encode(self.format(&Rfc3339).unwrap(), buf)
     }
 }
 
-impl Encode<'_, Sqlite> for PrimitiveDateTime {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
+impl Encode<'_, LibsqlClient> for PrimitiveDateTime {
+    fn encode_by_ref(&self, buf: &mut Vec<libsql_client::Value>) -> IsNull {
         let format = fd!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond]");
-        Encode::<Sqlite>::encode(self.format(&format).unwrap(), buf)
+        Encode::<LibsqlClient>::encode(self.format(&format).unwrap(), buf)
     }
 }
 
-impl Encode<'_, Sqlite> for Date {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
+impl Encode<'_, LibsqlClient> for Date {
+    fn encode_by_ref(&self, buf: &mut Vec<libsql_client::Value>) -> IsNull {
         let format = fd!("[year]-[month]-[day]");
-        Encode::<Sqlite>::encode(self.format(&format).unwrap(), buf)
+        Encode::<LibsqlClient>::encode(self.format(&format).unwrap(), buf)
     }
 }
 
-impl Encode<'_, Sqlite> for Time {
-    fn encode_by_ref(&self, buf: &mut Vec<SqliteArgumentValue<'_>>) -> IsNull {
+impl Encode<'_, LibsqlClient> for Time {
+    fn encode_by_ref(&self, buf: &mut Vec<libsql_client::Value>) -> IsNull {
         let format = fd!("[hour]:[minute]:[second].[subsecond]");
-        Encode::<Sqlite>::encode(self.format(&format).unwrap(), buf)
+        Encode::<LibsqlClient>::encode(self.format(&format).unwrap(), buf)
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for OffsetDateTime {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for OffsetDateTime {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         decode_offset_datetime(value)
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for PrimitiveDateTime {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for PrimitiveDateTime {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         decode_datetime(value)
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for Date {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for Date {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         Ok(Date::parse(value.text()?, &fd!("[year]-[month]-[day]"))?)
     }
 }
 
-impl<'r> Decode<'r, Sqlite> for Time {
-    fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
+impl<'r> Decode<'r, LibsqlClient> for Time {
+    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         let value = value.text()?;
 
         let sqlite_time_formats = &[
@@ -119,7 +119,7 @@ impl<'r> Decode<'r, Sqlite> for Time {
     }
 }
 
-fn decode_offset_datetime(value: SqliteValueRef<'_>) -> Result<OffsetDateTime, BoxDynError> {
+fn decode_offset_datetime(value: LibsqlClientValueRef<'_>) -> Result<OffsetDateTime, BoxDynError> {
     let dt = match value.type_info().0 {
         DataType::Text => decode_offset_datetime_from_text(value.text()?),
         DataType::Int | DataType::Int64 => {
@@ -148,7 +148,7 @@ fn decode_offset_datetime_from_text(value: &str) -> Option<OffsetDateTime> {
     None
 }
 
-fn decode_datetime(value: SqliteValueRef<'_>) -> Result<PrimitiveDateTime, BoxDynError> {
+fn decode_datetime(value: LibsqlClientValueRef<'_>) -> Result<PrimitiveDateTime, BoxDynError> {
     let dt = match value.type_info().0 {
         DataType::Text => decode_datetime_from_text(value.text()?),
         DataType::Int | DataType::Int64 => {

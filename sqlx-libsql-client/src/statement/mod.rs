@@ -41,7 +41,7 @@ impl<'q> Statement<'q> for LibsqlClientStatement<'q> {
         &self.columns
     }
 
-    impl_statement_query!(LibsqlClientArguments<'_>);
+    impl_statement_query!(LibsqlClientArguments);
 }
 
 impl ColumnIndex<LibsqlClientStatement<'_>> for &'_ str {

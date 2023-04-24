@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 
 pub(crate) use sqlx_core::value::{Value, ValueRef};
 
