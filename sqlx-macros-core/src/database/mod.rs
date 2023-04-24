@@ -166,6 +166,9 @@ mod mysql;
 #[cfg(feature = "sqlite")]
 mod sqlite;
 
+#[cfg(feature = "libsql-client")]
+mod libsql_client;
+
 mod fake_sqlx {
     pub use sqlx_core::*;
 
