@@ -180,4 +180,7 @@ mod fake_sqlx {
 
     #[cfg(feature = "sqlite")]
     pub use sqlx_sqlite as sqlite;
+
+    #[cfg(feature = "libsql-client")]
+    pub use sqlx_libsql_client as libsql_client;
 }

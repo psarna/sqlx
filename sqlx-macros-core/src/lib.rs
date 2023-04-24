@@ -46,6 +46,8 @@ pub const FOSS_DRIVERS: &[QueryDriver] = &[
     QueryDriver::new::<sqlx_postgres::Postgres>(),
     #[cfg(feature = "sqlite")]
     QueryDriver::new::<sqlx_sqlite::Sqlite>(),
+    #[cfg(feature = "libsql-client")]
+    QueryDriver::new::<sqlx_libsql_client::LibsqlClient>(),
 ];
 
 pub fn block_on<F>(f: F) -> F::Output
