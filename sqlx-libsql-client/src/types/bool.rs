@@ -17,14 +17,16 @@ impl Type<LibsqlClient> for bool {
 
 impl<'q> Encode<'q, LibsqlClient> for bool {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Integer{ value: (*self).into() });
+        args.push(libsql_client::Value::Integer {
+            value: (*self).into(),
+        });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for bool {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<bool, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<bool, BoxDynError> {
         //Ok(value.int() != 0)
         todo!()
     }

@@ -4,7 +4,7 @@ use crate::{
 };
 use futures_core::future::BoxFuture;
 use futures_core::stream::BoxStream;
-use futures_util::{TryFutureExt, TryStreamExt};
+// use futures_util::{TryFutureExt, TryStreamExt};
 use sqlx_core::describe::Describe;
 use sqlx_core::error::Error;
 use sqlx_core::executor::{Execute, Executor};
@@ -15,7 +15,7 @@ impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
 
     fn fetch_many<'e, 'q: 'e, E: 'q>(
         self,
-        mut query: E,
+        mut _query: E,
     ) -> BoxStream<'e, Result<Either<LibsqlClientQueryResult, LibsqlClientRow>, Error>>
     where
         'c: 'e,
@@ -31,12 +31,13 @@ impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
                 .map_ok(flume::Receiver::into_stream)
                 .try_flatten_stream(),
         )*/
+        println!("fetch_many");
         todo!()
     }
 
     fn fetch_optional<'e, 'q: 'e, E: 'q>(
         self,
-        mut query: E,
+        mut _query: E,
     ) -> BoxFuture<'e, Result<Option<LibsqlClientRow>, Error>>
     where
         'c: 'e,
@@ -63,12 +64,13 @@ impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
 
             Ok(None)
         })*/
+        println!("fetch_optional");
         todo!()
     }
 
     fn prepare_with<'e, 'q: 'e>(
         self,
-        sql: &'q str,
+        _sql: &'q str,
         _parameters: &[LibsqlClientTypeInfo],
     ) -> BoxFuture<'e, Result<LibsqlClientStatement<'q>, Error>>
     where
@@ -82,6 +84,7 @@ impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
                 ..statement
             })
         })*/
+        println!("prepare_with");
         todo!()
     }
 
@@ -94,6 +97,11 @@ impl<'c> Executor<'c> for &'c mut LibsqlClientConnection {
         'c: 'e,
     {
         //Box::pin(self.worker.describe(sql))
-        todo!()
+        println!("describing {sql}");
+        Box::pin(futures_util::future::ok(Describe {
+            columns: Vec::new(),
+            parameters: Some(Either::Right(1)),
+            nullable: Vec::new(),
+        }))
     }
 }

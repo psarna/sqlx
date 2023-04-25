@@ -3,8 +3,6 @@ use futures_core::future::BoxFuture;
 use log::LevelFilter;
 use sqlx_core::connection::ConnectOptions;
 use sqlx_core::error::Error;
-use sqlx_core::executor::Executor;
-use std::fmt::Write;
 use std::time::Duration;
 use url::Url;
 
@@ -25,12 +23,12 @@ impl ConnectOptions for LibsqlClientConnectOptions {
         })
     }
 
-    fn log_statements(mut self, level: LevelFilter) -> Self {
+    fn log_statements(mut self, _level: LevelFilter) -> Self {
         //self.log_settings.log_statements(level);
         self
     }
 
-    fn log_slow_statements(mut self, level: LevelFilter, duration: Duration) -> Self {
+    fn log_slow_statements(mut self, _level: LevelFilter, _duration: Duration) -> Self {
         //self.log_settings.log_slow_statements(level, duration);
         self
     }

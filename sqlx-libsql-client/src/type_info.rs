@@ -5,8 +5,7 @@ use crate::error::BoxDynError;
 
 pub(crate) use sqlx_core::type_info::*;
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, serde::Serialize, serde::Deserialize)]
 pub(crate) enum DataType {
     Null,
     Int,
@@ -27,8 +26,7 @@ pub(crate) enum DataType {
 }
 
 /// Type information for a SQLite type.
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct LibsqlClientTypeInfo(pub(crate) DataType);
 
 impl Display for LibsqlClientTypeInfo {

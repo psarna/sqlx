@@ -22,10 +22,12 @@ impl FromStr for LibsqlClientConnectOptions {
     type Err = Error;
 
     fn from_str(mut url: &str) -> Result<Self, Self::Err> {
-        // remove scheme from the URL
+        // switch scheme from the URL
         url = url
             .trim_start_matches("libsql://")
             .trim_start_matches("libsql:");
+
+        println!("URL: {url}");
 
         let mut database_and_params = url.splitn(2, '?');
 

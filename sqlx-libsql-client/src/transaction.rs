@@ -10,22 +10,22 @@ pub struct LibsqlClientTransactionManager;
 impl TransactionManager for LibsqlClientTransactionManager {
     type Database = LibsqlClient;
 
-    fn begin(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
+    fn begin(_conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement this
         Box::pin(futures_util::future::ok(()))
     }
 
-    fn commit(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
+    fn commit(_conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement this
         Box::pin(futures_util::future::ok(()))
     }
 
-    fn rollback(conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
+    fn rollback(_conn: &mut LibsqlClientConnection) -> BoxFuture<'_, Result<(), Error>> {
         // FIXME: implement this
         Box::pin(futures_util::future::ok(()))
     }
 
-    fn start_rollback(conn: &mut LibsqlClientConnection) {
+    fn start_rollback(_conn: &mut LibsqlClientConnection) {
         // FIXME: implement this
     }
 }

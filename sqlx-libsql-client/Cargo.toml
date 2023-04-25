@@ -14,8 +14,8 @@ repository.workspace = true
 
 [features]
 any = ["sqlx-core/any"]
-json = ["sqlx-core/json", "serde"]
-offline = ["sqlx-core/offline", "serde"]
+json = ["sqlx-core/json"]
+offline = ["sqlx-core/offline"]
 migrate = ["sqlx-core/migrate"]
 
 chrono = ["dep:chrono", "bitflags"]
@@ -45,10 +45,11 @@ atoi = "2.0"
 log = "0.4.17"
 tracing = { version = "0.1.37", features = ["log"] }
 
-serde = { version = "1.0.145", features = ["derive"], optional = true }
+serde = { version = "1.0.145", features = ["derive"] }
 regex = { version = "1.5.5", optional = true }
 
-libsql-client = { version = "0.24.3", default-features = false, features = ["reqwest_backend"] }
+libsql-client = { version = "0.24.3", default-features = false, features = ["reqwest_backend", "local_backend"] }
+sqlx-sqlite = { workspace = "true", path = "../sqlx-sqlite" }
 
 [dependencies.libsqlite3-sys]
 version = "0.25.1"

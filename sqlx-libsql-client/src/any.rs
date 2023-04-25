@@ -210,13 +210,15 @@ fn map_arguments(args: AnyArguments<'_>) -> LibsqlClientArguments {
             .into_iter()
             .map(|val| match val {
                 AnyValueKind::Null => libsql_client::Value::Null,
-                AnyValueKind::SmallInt(i) => libsql_client::Value::Integer{ value: i as i64},
-                AnyValueKind::Integer(i) => libsql_client::Value::Integer{ value: i as i64},
-                AnyValueKind::BigInt(i) => libsql_client::Value::Integer{ value: i },
-                AnyValueKind::Real(r) => libsql_client::Value::Float{ value: r as f64},
-                AnyValueKind::Double(d) => libsql_client::Value::Float{ value: d},
-                AnyValueKind::Text(t) => libsql_client::Value::Text{ value: t.to_string() },
-                AnyValueKind::Blob(b) => libsql_client::Value::Blob{ value: b.to_vec() },
+                AnyValueKind::SmallInt(i) => libsql_client::Value::Integer { value: i as i64 },
+                AnyValueKind::Integer(i) => libsql_client::Value::Integer { value: i as i64 },
+                AnyValueKind::BigInt(i) => libsql_client::Value::Integer { value: i },
+                AnyValueKind::Real(r) => libsql_client::Value::Float { value: r as f64 },
+                AnyValueKind::Double(d) => libsql_client::Value::Float { value: d },
+                AnyValueKind::Text(t) => libsql_client::Value::Text {
+                    value: t.to_string(),
+                },
+                AnyValueKind::Blob(b) => libsql_client::Value::Blob { value: b.to_vec() },
                 // AnyValueKind is `#[non_exhaustive]` but we should have covered everything
                 _ => unreachable!("BUG: missing mapping for {:?}", val),
             })

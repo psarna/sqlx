@@ -2,8 +2,7 @@ use crate::{LibsqlClient, LibsqlClientTypeInfo};
 
 pub(crate) use sqlx_core::column::*;
 
-#[derive(Debug, Clone)]
-#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LibsqlClientColumn {
     pub(crate) name: String,
     pub(crate) ordinal: usize,

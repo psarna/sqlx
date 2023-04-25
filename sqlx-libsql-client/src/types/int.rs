@@ -17,14 +17,16 @@ impl Type<LibsqlClient> for i8 {
 
 impl<'q> Encode<'q, LibsqlClient> for i8 {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Integer{ value: *self as i64 });
+        args.push(libsql_client::Value::Integer {
+            value: *self as i64,
+        });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for i8 {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         //Ok(value.int().try_into()?)
         todo!()
     }
@@ -42,14 +44,16 @@ impl Type<LibsqlClient> for i16 {
 
 impl<'q> Encode<'q, LibsqlClient> for i16 {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Integer{ value: *self as i64});
+        args.push(libsql_client::Value::Integer {
+            value: *self as i64,
+        });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for i16 {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         //Ok(value.int().try_into()?)
         todo!()
     }
@@ -67,14 +71,16 @@ impl Type<LibsqlClient> for i32 {
 
 impl<'q> Encode<'q, LibsqlClient> for i32 {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Integer{ value: *self as i64 });
+        args.push(libsql_client::Value::Integer {
+            value: *self as i64,
+        });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for i32 {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         //Ok(value.int())
         todo!()
     }
@@ -92,14 +98,14 @@ impl Type<LibsqlClient> for i64 {
 
 impl<'q> Encode<'q, LibsqlClient> for i64 {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Integer{ value: *self });
+        args.push(libsql_client::Value::Integer { value: *self });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for i64 {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         //Ok(value.int64())
         todo!()
     }

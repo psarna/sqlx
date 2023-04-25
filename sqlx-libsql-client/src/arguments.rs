@@ -1,9 +1,5 @@
 use crate::encode::{Encode, IsNull};
-use crate::error::Error;
 use crate::LibsqlClient;
-use atoi::atoi;
-use libsqlite3_sys::SQLITE_OK;
-use std::borrow::Cow;
 
 pub(crate) use sqlx_core::arguments::*;
 

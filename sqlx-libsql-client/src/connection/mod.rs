@@ -116,7 +116,7 @@ impl Statements {
     fn get(
         &mut self,
         query: &str,
-        persistent: bool,
+        _persistent: bool,
     ) -> Result<&mut libsql_client::Statement, Error> {
         let exists = self.cached.contains_key(query);
 

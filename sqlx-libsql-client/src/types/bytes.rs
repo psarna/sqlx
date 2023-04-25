@@ -17,14 +17,16 @@ impl Type<LibsqlClient> for [u8] {
 
 impl<'q> Encode<'q, LibsqlClient> for &'q [u8] {
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Blob{ value: self.to_vec() });
+        args.push(libsql_client::Value::Blob {
+            value: self.to_vec(),
+        });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for &'r [u8] {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         //Ok(value.blob())
         todo!()
     }
@@ -42,20 +44,22 @@ impl Type<LibsqlClient> for Vec<u8> {
 
 impl<'q> Encode<'q, LibsqlClient> for Vec<u8> {
     fn encode(self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Blob{ value: self });
+        args.push(libsql_client::Value::Blob { value: self });
 
         IsNull::No
     }
 
     fn encode_by_ref(&self, args: &mut Vec<libsql_client::Value>) -> IsNull {
-        args.push(libsql_client::Value::Blob{ value: self.clone()});
+        args.push(libsql_client::Value::Blob {
+            value: self.clone(),
+        });
 
         IsNull::No
     }
 }
 
 impl<'r> Decode<'r, LibsqlClient> for Vec<u8> {
-    fn decode(value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
+    fn decode(_value: LibsqlClientValueRef<'r>) -> Result<Self, BoxDynError> {
         //Ok(value.blob().to_owned())
         todo!()
     }

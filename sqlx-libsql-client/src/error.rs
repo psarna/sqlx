@@ -1,8 +1,6 @@
+use std::borrow::Cow;
 use std::error::Error as StdError;
-use std::ffi::CStr;
 use std::fmt::{self, Display, Formatter};
-use std::os::raw::c_int;
-use std::{borrow::Cow, str::from_utf8_unchecked};
 
 pub(crate) use sqlx_core::error::*;
 
